@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<bean id="checker" class="com.doublechaintech.messagecenter.MessagecenterChecker" scope="prototype"></bean>
+
+	<bean id="platformManagerBase" class="com.doublechaintech.messagecenter.platform.PlatformManagerImpl"/>
+	<bean id="platformManager" class="com.doublechaintech.messagecenter.platform.PlatformCustomManagerImpl" parent="platformManagerBase" ></bean>
+	
+	<bean id="profileManagerBase" class="com.doublechaintech.messagecenter.profile.ProfileManagerImpl"/>
+	<bean id="profileManager" class="com.doublechaintech.messagecenter.profile.ProfileCustomManagerImpl" parent="profileManagerBase" ></bean>
+	
+	<bean id="privateMessageManagerBase" class="com.doublechaintech.messagecenter.privatemessage.PrivateMessageManagerImpl"/>
+	<bean id="privateMessageManager" class="com.doublechaintech.messagecenter.privatemessage.PrivateMessageManagerImpl" parent="privateMessageManagerBase" ></bean>
+	
+	<bean id="userDomainManagerBase" class="com.doublechaintech.messagecenter.userdomain.UserDomainManagerImpl"/>
+	<bean id="userDomainManager" class="com.doublechaintech.messagecenter.userdomain.UserDomainCustomManagerImpl" parent="userDomainManagerBase" ></bean>
+	
+	<bean id="userWhiteListManagerBase" class="com.doublechaintech.messagecenter.userwhitelist.UserWhiteListManagerImpl"/>
+	<bean id="userWhiteListManager" class="com.doublechaintech.messagecenter.userwhitelist.UserWhiteListManagerImpl" parent="userWhiteListManagerBase" ></bean>
+	
+	<bean id="secUserManagerBase" class="com.doublechaintech.messagecenter.secuser.SecUserManagerImpl"/>
+	<bean id="secUserManager" class="com.doublechaintech.messagecenter.secuser.SecUserCustomManagerImpl" parent="secUserManagerBase" ></bean>
+	
+	<bean id="secUserBlockingManagerBase" class="com.doublechaintech.messagecenter.secuserblocking.SecUserBlockingManagerImpl"/>
+	<bean id="secUserBlockingManager" class="com.doublechaintech.messagecenter.secuserblocking.SecUserBlockingCustomManagerImpl" parent="secUserBlockingManagerBase" ></bean>
+	
+	<bean id="userAppManagerBase" class="com.doublechaintech.messagecenter.userapp.UserAppManagerImpl"/>
+	<bean id="userAppManager" class="com.doublechaintech.messagecenter.userapp.UserAppCustomManagerImpl" parent="userAppManagerBase" ></bean>
+	
+	<bean id="listAccessManagerBase" class="com.doublechaintech.messagecenter.listaccess.ListAccessManagerImpl"/>
+	<bean id="listAccessManager" class="com.doublechaintech.messagecenter.listaccess.ListAccessManagerImpl" parent="listAccessManagerBase" ></bean>
+	
+	<bean id="objectAccessManagerBase" class="com.doublechaintech.messagecenter.objectaccess.ObjectAccessManagerImpl"/>
+	<bean id="objectAccessManager" class="com.doublechaintech.messagecenter.objectaccess.ObjectAccessManagerImpl" parent="objectAccessManagerBase" ></bean>
+	
+	<bean id="loginHistoryManagerBase" class="com.doublechaintech.messagecenter.loginhistory.LoginHistoryManagerImpl"/>
+	<bean id="loginHistoryManager" class="com.doublechaintech.messagecenter.loginhistory.LoginHistoryManagerImpl" parent="loginHistoryManagerBase" ></bean>
+	
+	<bean id="genericFormManagerBase" class="com.doublechaintech.messagecenter.genericform.GenericFormManagerImpl"/>
+	<bean id="genericFormManager" class="com.doublechaintech.messagecenter.genericform.GenericFormCustomManagerImpl" parent="genericFormManagerBase" ></bean>
+	
+	<bean id="formMessageManagerBase" class="com.doublechaintech.messagecenter.formmessage.FormMessageManagerImpl"/>
+	<bean id="formMessageManager" class="com.doublechaintech.messagecenter.formmessage.FormMessageManagerImpl" parent="formMessageManagerBase" ></bean>
+	
+	<bean id="formFieldMessageManagerBase" class="com.doublechaintech.messagecenter.formfieldmessage.FormFieldMessageManagerImpl"/>
+	<bean id="formFieldMessageManager" class="com.doublechaintech.messagecenter.formfieldmessage.FormFieldMessageManagerImpl" parent="formFieldMessageManagerBase" ></bean>
+	
+	<bean id="formFieldManagerBase" class="com.doublechaintech.messagecenter.formfield.FormFieldManagerImpl"/>
+	<bean id="formFieldManager" class="com.doublechaintech.messagecenter.formfield.FormFieldManagerImpl" parent="formFieldManagerBase" ></bean>
+	
+	<bean id="formActionManagerBase" class="com.doublechaintech.messagecenter.formaction.FormActionManagerImpl"/>
+	<bean id="formActionManager" class="com.doublechaintech.messagecenter.formaction.FormActionManagerImpl" parent="formActionManagerBase" ></bean>
+	
+
+	<bean id="managerGroupBase" class="com.doublechaintech.messagecenter.ManagerGroup">
+		<property name="platformManager" ref="platformManager"/>
+		<property name="profileManager" ref="profileManager"/>
+		<property name="privateMessageManager" ref="privateMessageManager"/>
+		<property name="userDomainManager" ref="userDomainManager"/>
+		<property name="userWhiteListManager" ref="userWhiteListManager"/>
+		<property name="secUserManager" ref="secUserManager"/>
+		<property name="secUserBlockingManager" ref="secUserBlockingManager"/>
+		<property name="userAppManager" ref="userAppManager"/>
+		<property name="listAccessManager" ref="listAccessManager"/>
+		<property name="objectAccessManager" ref="objectAccessManager"/>
+		<property name="loginHistoryManager" ref="loginHistoryManager"/>
+		<property name="genericFormManager" ref="genericFormManager"/>
+		<property name="formMessageManager" ref="formMessageManager"/>
+		<property name="formFieldMessageManager" ref="formFieldMessageManager"/>
+		<property name="formFieldManager" ref="formFieldManager"/>
+		<property name="formActionManager" ref="formActionManager"/>
+	</bean>
+	<bean id="managerGroup" parent="managerGroupBase"></bean>
+	
+
+
+</beans>
+
+
+
+
+
+
+
+

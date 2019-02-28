@@ -1,0 +1,48 @@
+<?xml version='1.0' ?>
+<root org="doublechaintech" 
+	chinese_name="Message Center Services" 
+	english_name="Message Center Services">
+
+	<platform
+		name="Chain eComerce Platform"
+		introduction="new generation of eCommerce platform based on opensource and modern tech"
+		current_version="V1.0"
+		
+	
+	/>
+	
+	
+	
+	<profile
+		name="Philip Zhang|Naveen Kumar R |VENKATESH GADUPUTI"
+		
+		platform="$(platform)"
+	/>
+	
+	
+	
+	
+	<private_message
+		title="valentines day"
+		content="text()"
+		send_time="createTime()"
+		read_time="updateTime()"
+		sender="$(profile)"
+		receiver="$(profile)"
+		status="UNREAD|READ"
+		platform="$(platform)"
+	/>
+	
+	
+	
+</root>
+ 
+
+
+
+
+
+
+
+
+
