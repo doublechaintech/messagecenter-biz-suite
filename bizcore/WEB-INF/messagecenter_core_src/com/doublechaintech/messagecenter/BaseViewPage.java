@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.terapico.caf.viewcomponent.BaseViewComponent;
 import com.terapico.caf.viewcomponent.ButtonViewComponent;
 import com.terapico.caf.viewcomponent.FilterTabsViewComponent;
+import com.terapico.caf.viewcomponent.PopupViewComponent;
 import com.terapico.caf.viewpage.SerializeScope;
 import com.terapico.utils.MapUtil;
 import com.terapico.utils.TextUtil;
@@ -36,7 +38,16 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 	@JsonIgnore
 	protected String pageTitle;
 	@JsonIgnore
+	protected String linkToUrl;
+	@JsonIgnore
 	protected HashMap<String, Object> dataContainer;
+	
+	public String getLinkToUrl() {
+		return linkToUrl;
+	}
+	public void setLinkToUrl(String linkToUrl) {
+		this.linkToUrl = linkToUrl;
+	}
 	public String getPageTitle() {
 		return pageTitle;
 	}
@@ -49,10 +60,9 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 		dataPool.put(name, value);
 	}
 
-	public Object doRender(MessagecenterUserContext userContext) {
+	public Map<String, Object> doRender(MessagecenterUserContext userContext) {
 		this.userContext = userContext;
 		beforeDoRendering();
-		addFieldToOwner(this, null, "pageTitle", this.getPageTitle());
 		doRendering();
 		this.userContext.forceResponseXClassHeader(this.getClass().getName());
 		afterDoRendering();
@@ -60,7 +70,8 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 	}
 
 	protected void beforeDoRendering() {
-		// By default, nothing to do
+		userContext.setResponseHeader("x-actor-class", this.getClass().getName());
+		addFieldToOwner(this, null, "pageTitle", this.getPageTitle());
 	}
 
 	protected void afterDoRendering() {
@@ -154,7 +165,7 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 			return;
 		}
 
-		String hashCode = value.hashCode() + "/";
+		String hashCode = "/"+value.hashCode() + "/";
 		if (path.contains(hashCode)) {
 			return;
 		}
@@ -197,6 +208,9 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 		}
 		if (value instanceof BaseEntity) {
 			return doRenderingBaseEntity(fieldScope, (BaseEntity) value, path);
+		}
+		if (value instanceof BaseViewComponent) {
+			return ((BaseViewComponent) value).toMap();
 		}
 		// 最后了，没办法了
 		if (fieldScope.isRevers()) {
@@ -253,6 +267,9 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 		}
 		List<Object> resultList = new ArrayList<>(asList.size());
 		for (Object item : asList) {
+			if (item == null) {
+				continue;
+			}
 			String outputName = fieldScope.getAliasName() == null ? key : fieldScope.getAliasName();
 			CustomSerializer cSerializer = getCustomSerializerByObject(item);
 			// 如果有自定义的序列化方法，优先使用自定义的
@@ -275,11 +292,11 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 			if (fieldScope.isPutInDataContainer()) {
 				if (item instanceof BaseEntity) {
 					String skey = ((BaseEntity) item).getInternalType()+"_"+((BaseEntity) item).getId();
-					resultList.add(MapUtil.newMap(MapUtil.$("id", skey)));
+					resultList.add(MapUtil.put("id", skey).into_map());
 					addToDataContainer(skey, convertResult);
 				} else {
 					String skey = item.getClass().getSimpleName()+"_"+item.hashCode();
-					resultList.add(MapUtil.newMap(MapUtil.$("id", skey)));
+					resultList.add(MapUtil.put("id", skey).into_map());
 					addToDataContainer(skey, convertResult);
 				}
 			}else {
@@ -331,13 +348,16 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 		if (object instanceof FilterTabsViewComponent) {
 			return new FilterTabsSerializer();
 		}
-		/*
 		if (object instanceof BaseMessagecenterFormProcessor) {
 			return new FormProcessorSerializer();
 		}
-		*/
 		if (object instanceof ButtonViewComponent) {
+			// action 是特别定制的序列化
 			return new ButtonViewComponentSerializer();
+		}
+		if (object instanceof PopupViewComponent) {
+			// popup 也是特别定制的的
+			return new PopupViewComponentSerializer();
 		}
 		return null;
 	}
@@ -362,7 +382,7 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 			for (Map<String, Object> content : contentList) {
 				Map<String, Object> resultData = new HashMap<>();
 				addFieldToOwner(resultData, fieldScope, "title", content.get("text"));
-				addFieldToOwner(resultData, fieldScope, "tips", content.get("tips"));
+				addFieldToOwner(resultData, fieldScope, "brief", content.get("tips"));
 				addFieldToOwner(resultData, fieldScope, "code", content.get("code"));
 				addFieldToOwner(resultData, fieldScope, "summary", content.get("tips"));
 				addFieldToOwner(resultData, fieldScope, "linkToUrl", content.get("linkToUrl"));
@@ -376,13 +396,11 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 	protected class FormProcessorSerializer implements CustomSerializer {
 		@Override
 		public Object serialize(SerializeScope serializeScope, Object value, String path) {
-			/*
 			BaseMessagecenterFormProcessor form = (BaseMessagecenterFormProcessor) value;
 			if (form == null) {
 				return null;
 			}
-			return form.mapToUiForm(userContext);*/
-			return null;
+			return form.mapToUiForm(userContext);
 		}
 	}
 	
@@ -393,18 +411,52 @@ public abstract class BaseViewPage extends HashMap<String, Object> {
 			SerializeScope fieldScope = SerializeScope.EXCLUDE();
 			Map<String, Object> resultData = new HashMap<>();
 			addFieldToOwner(resultData, fieldScope, "callbackUrl", btn.getCallbackUrl());
-			addFieldToOwner(resultData, fieldScope, "title", btn.getContent());
+			addFieldToOwner(resultData, fieldScope, "shareRouter", btn.getShareRouter());
+			if (btn.getShareTitle() != null) {
+				addFieldToOwner(resultData, fieldScope, "title", btn.getShareTitle());
+				addFieldToOwner(resultData, fieldScope, "content", btn.getContent());
+			}else {
+				addFieldToOwner(resultData, fieldScope, "title", btn.getContent());
+			}
 			addFieldToOwner(resultData, fieldScope, "imageUrl", btn.getImageUrl());
+			addFieldToOwner(resultData, fieldScope, "enabled", btn.isActive());
 			addFieldToOwner(resultData, fieldScope, "linkToUrl", btn.getLinkToUrl());
 			addFieldToOwner(resultData, fieldScope, "code", btn.getTag());
 			addFieldToOwner(resultData, fieldScope, "type", btn.getType());
 			return resultData;
 		}
 	}
+	
+	protected class PopupViewComponentSerializer implements CustomSerializer {
+		@Override
+		public Object serialize(SerializeScope serializeScope, Object value, String path) {
+			PopupViewComponent popup = (PopupViewComponent) value;
+			SerializeScope fieldScope = SerializeScope.EXCLUDE();
+			Map<String, Object> resultData = new HashMap<>();
+			addFieldToOwner(resultData, fieldScope, "title", popup.getTitle());
+			addFieldToOwner(resultData, fieldScope, "text", popup.getText());
+			addFieldToOwner(resultData, fieldScope, "closeActionText", popup.getCloseActionText());
+			List<ButtonViewComponent> actionList = popup.getActionList();
+			if (actionList == null || actionList.isEmpty()) {
+				return resultData;
+			}
+			List<Object> actionsSrst = new ArrayList<>();
+			ButtonViewComponentSerializer btnSer = new ButtonViewComponentSerializer();
+			for(ButtonViewComponent action: actionList) {
+				actionsSrst.add(btnSer.serialize(serializeScope, action, path+action.hashCode()+"/"));
+			}
+			addFieldToOwner(resultData, fieldScope, "actionList", actionsSrst);
+			return resultData;
+		}
+	}
+	
+	public Map<String, Object> serializeObject(Object object, SerializeScope serializeScope) {
+		Map<String, Object> resultMap = new HashMap<>();
+		SerializeScope ssWrapper = SerializeScope.INCLUDE().field("data", serializeScope);
+		handleOneData(resultMap, ssWrapper, "/", "data", object);
+		return (Map<String, Object>) resultMap.get("data");
+	}
 }
-
-
-
 
 
 

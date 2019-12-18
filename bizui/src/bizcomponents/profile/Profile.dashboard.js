@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import FontAwesome from 'react-fontawesome';
 import { connect } from 'dva'
 import moment from 'moment'
-import BooleanOption from 'components/BooleanOption';
+import BooleanOption from '../../components/BooleanOption';
 import { Row, Col, Icon, Card, Tabs, Table, Radio, DatePicker, Tooltip, Menu, Dropdown,Badge, Switch,Select,Form,AutoComplete,Modal } from 'antd'
 import { Link, Route, Redirect} from 'dva/router'
 import numeral from 'numeral'
@@ -26,8 +26,9 @@ const {aggregateDataset,calcKey, defaultHideCloseTrans,
   defaultImageListOf,defaultSettingListOf,defaultBuildTransferModal,
   defaultExecuteTrans,defaultHandleTransferSearch,defaultShowTransferModel,
   defaultRenderExtraHeader,
-  defaultSubListsOf,
-  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers
+  defaultSubListsOf,defaultRenderAnalytics,
+  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers,
+  defaultQuickFunctions, defaultRenderSubjectList,
 }= DashboardTool
 
 
@@ -48,6 +49,7 @@ const optionList =(profile)=>{return [
 
 const buildTransferModal = defaultBuildTransferModal
 const showTransferModel = defaultShowTransferModel
+const internalRenderSubjectList = defaultRenderSubjectList
 const internalSettingListOf = (profile) =>defaultSettingListOf(profile, optionList)
 const internalLargeTextOf = (profile) =>{
 
@@ -79,8 +81,8 @@ const internalSummaryOf = (profile,targetComponent) =>{
 	const userContext = null
 	return (
 	<DescriptionList className={styles.headerList} size="small" col="4">
-<Description term="Id">{profile.id}</Description> 
-<Description term="Name">{profile.name}</Description> 
+<Description term="ID">{profile.id}</Description> 
+<Description term="名称">{profile.name}</Description> 
 	
         {buildTransferModal(profile,targetComponent)}
       </DescriptionList>
@@ -88,6 +90,7 @@ const internalSummaryOf = (profile,targetComponent) =>{
 
 }
 
+const internalQuickFunctions = defaultQuickFunctions
 
 class ProfileDashboard extends Component {
 
@@ -117,11 +120,11 @@ class ProfileDashboard extends Component {
     }
     const returnURL = this.props.returnURL
     
-    const cardsData = {cardsName:"Profile",cardsFor: "profile",
+    const cardsData = {cardsName:"配置文件",cardsFor: "profile",
     	cardsSource: this.props.profile,returnURL,displayName,
   		subItems: [
-{name: 'privateMessageListAsSender', displayName:'Private Message(Sender)',type:'privateMessage',count:privateMessageAsSenderCount,addFunction: true, role: 'privateMessageAsSender', metaInfo: privateMessageListAsSenderMetaInfo},
-{name: 'privateMessageListAsReceiver', displayName:'Private Message(Receiver)',type:'privateMessage',count:privateMessageAsReceiverCount,addFunction: true, role: 'privateMessageAsReceiver', metaInfo: privateMessageListAsReceiverMetaInfo},
+{name: 'privateMessageListAsSender', displayName:'私信(作为发送方的私有消息列表)',type:'privateMessage',count:privateMessageAsSenderCount,addFunction: true, role: 'privateMessageAsSender', metaInfo: privateMessageListAsSenderMetaInfo, renderItem: GlobalComponents.PrivateMessageBase.renderItemOfList},
+{name: 'privateMessageListAsReceiver', displayName:'私信(作为接收方的私有消息列表)',type:'privateMessage',count:privateMessageAsReceiverCount,addFunction: true, role: 'privateMessageAsReceiver', metaInfo: privateMessageListAsReceiverMetaInfo, renderItem: GlobalComponents.PrivateMessageBase.renderItemOfList},
     
       	],
   	};
@@ -134,6 +137,10 @@ class ProfileDashboard extends Component {
     const summaryOf = this.props.summaryOf || internalSummaryOf
     const renderTitle = this.props.renderTitle || internalRenderTitle
     const renderExtraFooter = this.props.renderExtraFooter || internalRenderExtraFooter
+    const renderAnalytics = this.props.renderAnalytics || defaultRenderAnalytics
+    const quickFunctions = this.props.quickFunctions || internalQuickFunctions
+    const renderSubjectList = this.props.renderSubjectList || internalRenderSubjectList
+    
     return (
 
       <PageHeaderLayout
@@ -141,15 +148,18 @@ class ProfileDashboard extends Component {
         content={summaryOf(cardsData.cardsSource,this)}
         wrapperClassName={styles.advancedForm}
       >
-      {renderExtraHeader(cardsData.cardsSource)}
-        <div>
+       
+        {renderExtraHeader(cardsData.cardsSource)}
+        {quickFunctions(cardsData)} 
+        {renderAnalytics(cardsData.cardsSource)}
         {settingListOf(cardsData.cardsSource)}
-        {imageListOf(cardsData.cardsSource)}
-        {subListsOf(cardsData)} 
+        {imageListOf(cardsData.cardsSource)}  
+        {renderSubjectList(cardsData)}       
         {largeTextOf(cardsData.cardsSource)}
-          
-        </div>
+        {renderExtraFooter(cardsData.cardsSource)}
+  		
       </PageHeaderLayout>
+    
     )
   }
 }

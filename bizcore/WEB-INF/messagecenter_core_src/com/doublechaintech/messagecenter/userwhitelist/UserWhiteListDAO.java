@@ -7,6 +7,9 @@ import com.doublechaintech.messagecenter.BaseEntity;
 import com.doublechaintech.messagecenter.SmartList;
 import com.doublechaintech.messagecenter.MultipleAccessKey;
 import com.doublechaintech.messagecenter.MessagecenterUserContext;
+
+import com.doublechaintech.messagecenter.userdomain.UserDomain;
+
 import com.doublechaintech.messagecenter.userdomain.UserDomainDAO;
 
 
@@ -50,6 +53,7 @@ public interface UserWhiteListDAO{
  	public void analyzeUserWhiteListByDomain(SmartList<UserWhiteList> resultList, String userDomainId, Map<String,Object> options);
 
  
- }
+ 
+}
 
 

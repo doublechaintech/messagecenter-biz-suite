@@ -23,12 +23,7 @@ const testValues = {
   senderId: 'P000001',
   receiverId: 'P000001',
   platformId: 'P000001',
-  content: '    一段样例文字。\
-可以分段。\
-\
-可以空行。\
-\
-',
+  content: '    一段样例文字。    一段样例文字。\n可以分段。可以分段。\n\n可以空行。可以空行。\n\n',
 }
 */
 
@@ -147,7 +142,7 @@ class PrivateMessageAssociateForm extends Component {
                   {getFieldDecorator('title', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Title" />
+                    <Input size="large" placeholder="标题" />
                   )}
                 </Form.Item>
               </Col>
@@ -157,7 +152,7 @@ class PrivateMessageAssociateForm extends Component {
                   {getFieldDecorator('status', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Status" />
+                    <Input size="large" placeholder="状态" />
                   )}
                 </Form.Item>
               </Col>

@@ -3,6 +3,8 @@ package com.doublechaintech.messagecenter.userwhitelist;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.math.BigDecimal;
@@ -24,7 +26,10 @@ import com.doublechaintech.messagecenter.userdomain.UserDomainDAO;
 
 
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
+
 
 public class UserWhiteListJDBCTemplateDAO extends MessagecenterNamingServiceDAO implements UserWhiteListDAO{
  
@@ -512,6 +517,9 @@ public class UserWhiteListJDBCTemplateDAO extends MessagecenterNamingServiceDAO 
 	public void enhanceList(List<UserWhiteList> userWhiteListList) {		
 		this.enhanceListInternal(userWhiteListList, this.getUserWhiteListMapper());
 	}
+	
+	
+	
 	@Override
 	public void collectAndEnhance(BaseEntity ownerEntity) {
 		List<UserWhiteList> userWhiteListList = ownerEntity.collectRefsWithType(UserWhiteList.INTERNAL_TYPE);
@@ -544,6 +552,9 @@ public class UserWhiteListJDBCTemplateDAO extends MessagecenterNamingServiceDAO 
 	public SmartList<UserWhiteList> queryList(String sql, Object... parameters) {
 	    return this.queryForList(sql, parameters, this.getUserWhiteListMapper());
 	}
+	
+	
+
 }
 
 

@@ -145,7 +145,7 @@ class UserAppAssociateForm extends Component {
                   {getFieldDecorator('title', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Title" />
+                    <Input size="large" placeholder="标题" />
                   )}
                 </Form.Item>
               </Col>
@@ -155,7 +155,7 @@ class UserAppAssociateForm extends Component {
                   {getFieldDecorator('appIcon', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入App Icon" />
+                    <Input size="large" placeholder="应用程序图标" />
                   )}
                 </Form.Item>
               </Col>
@@ -165,7 +165,7 @@ class UserAppAssociateForm extends Component {
                   {getFieldDecorator('permission', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Permission" />
+                    <Input size="large" placeholder="许可" />
                   )}
                 </Form.Item>
               </Col>
@@ -175,7 +175,7 @@ class UserAppAssociateForm extends Component {
                   {getFieldDecorator('objectType', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Object Type" />
+                    <Input size="large" placeholder="访问对象类型" />
                   )}
                 </Form.Item>
               </Col>
@@ -185,7 +185,7 @@ class UserAppAssociateForm extends Component {
                   {getFieldDecorator('objectId', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Object Id" />
+                    <Input size="large" placeholder="对象ID" />
                   )}
                 </Form.Item>
               </Col>
@@ -195,7 +195,7 @@ class UserAppAssociateForm extends Component {
                   {getFieldDecorator('location', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Location" />
+                    <Input size="large" placeholder="位置" />
                   )}
                 </Form.Item>
               </Col>

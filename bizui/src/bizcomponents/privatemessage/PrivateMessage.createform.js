@@ -22,12 +22,7 @@ const testValues = {
   senderId: 'P000001',
   receiverId: 'P000001',
   platformId: 'P000001',
-  content: '    一段样例文字。\
-可以分段。\
-\
-可以空行。\
-\
-',
+  content: '    一段样例文字。    一段样例文字。\n可以分段。可以分段。\n\n可以空行。可以空行。\n\n',
 }
 */
 
@@ -201,10 +196,10 @@ class PrivateMessageCreateForm extends Component {
       labelCol: { span: 14 },
       wrapperCol: { span: 4 },
     }
-    return (
+	return (
       <PageHeaderLayout
-        title={appLocaleName(userContext,"CreateNew")}
-        content={appLocaleName(userContext,"CreateNew")}
+        title={`${appLocaleName(userContext,"CreateNew")}私信`}
+        content={`${appLocaleName(userContext,"CreateNew")}私信`}
         wrapperClassName={styles.advancedForm}
       >
         <Card title={appLocaleName(userContext,"BasicInfo")} className={styles.card} bordered={false}>
@@ -216,7 +211,7 @@ class PrivateMessageCreateForm extends Component {
                   {getFieldDecorator('title', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Title" />
+                    <Input size="large" placeholder="标题" />
                   )}
                 </Form.Item>
               </Col>
@@ -226,7 +221,7 @@ class PrivateMessageCreateForm extends Component {
                   {getFieldDecorator('status', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Status" />
+                    <Input size="large" placeholder="状态" />
                   )}
                 </Form.Item>
               </Col>
@@ -244,7 +239,7 @@ class PrivateMessageCreateForm extends Component {
 
 
 
-        <Card title="Content" className={styles.card} bordered={false}>
+        <Card title="内容" className={styles.card} bordered={false}>
           <Form >
             <Row gutter={16}>
               <Col lg={24} md={24} sm={24}>

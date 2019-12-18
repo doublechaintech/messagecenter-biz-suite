@@ -1,107 +1,114 @@
+import React from 'react'
+import { Icon,Divider } from 'antd'
 
-import ImagePreview from '../../components/ImagePreview'
 import { Link } from 'dva/router'
 import moment from 'moment'
+import ImagePreview from '../../components/ImagePreview'
 import appLocaleName from '../../common/Locale.tool'
+import BaseTool from '../../common/Base.tool'
+import GlobalComponents from '../../custcomponents'
+import DescriptionList from '../../components/DescriptionList'
+const { Description } = DescriptionList
+const {
+	defaultRenderReferenceCell,
+	defaultRenderBooleanCell,
+	defaultRenderMoneyCell,
+	defaultRenderDateTimeCell,
+	defaultRenderImageCell,
+	defaultRenderDateCell,
+	defaultRenderIdentifier,
+	defaultRenderTextCell,
+} = BaseTool
+
+const renderTextCell=defaultRenderTextCell
+const renderIdentifier=defaultRenderIdentifier
+const renderDateCell=defaultRenderDateCell
+const renderDateTimeCell=defaultRenderDateTimeCell
+const renderImageCell=defaultRenderImageCell
+const renderMoneyCell=defaultRenderMoneyCell
+const renderBooleanCell=defaultRenderBooleanCell
+const renderReferenceCell=defaultRenderReferenceCell
 
 
-
-const menuData = {menuName:"Sec User", menuFor: "secUser",
+const menuData = {menuName:"安全用户", menuFor: "secUser",
   		subItems: [
-  {name: 'userAppList', displayName:'User App', icon:'user',readPermission: false,createPermission: false,deletePermission: false,updatePermission: false,executionPermission: false},
-  {name: 'loginHistoryList', displayName:'Login History', icon:'history',readPermission: false,createPermission: false,deletePermission: false,updatePermission: false,executionPermission: false},
+  {name: 'userAppList', displayName:'用户应用程序', icon:'user',readPermission: false,createPermission: false,deletePermission: false,updatePermission: false,executionPermission: false, viewGroup: '__no_group'},
+  {name: 'loginHistoryList', displayName:'登录历史', icon:'history',readPermission: false,createPermission: false,deletePermission: false,updatePermission: false,executionPermission: false, viewGroup: '__no_group'},
   
   		],
 }
 
-const renderTextCell=(value, record)=>{
-	const userContext = null
-	if(!value){
-		return '';
-	}
-	if(value==null){
-		return '';
-	}
-	if(value.length>15){
-		return value.substring(0,15)+"...("+value.length+appLocaleName(userContext,"Chars")+")"
-	}
-	return value
-	
-}
-
-const renderIdentifier=(value, record, targtObjectType)=>{
-
-	return (<Link to={`/${targtObjectType}/${value}/dashboard`}>{value}</Link>)
-	
-}
-
-const renderDateCell=(value, record)=>{
-	return moment(value).format('YYYY-MM-DD');
-}
-const renderDateTimeCell=(value, record)=>{
-	return moment(value).format('YYYY-MM-DD HH:mm');	
-}
-
-const renderImageCell=(value, record, title)=>{
-	return (<ImagePreview imageTitle={title} imageLocation={value} />)	
-}
-
-const renderMoneyCell=(value, record)=>{
-	const userContext = null
-	if(!value){
-		return appLocaleName(userContext,"Empty")
-	}
-	if(value == null){
-		return appLocaleName(userContext,"Empty")
-	}
-	return (`${appLocaleName(userContext,"Currency")}${value.toFixed(2)}`)
-}
-
-const renderBooleanCell=(value, record)=>{
-	const userContext = null
-
-	return  (value? appLocaleName(userContext,"Yes") : appLocaleName(userContext,"No"))
-
-}
-
-const renderReferenceCell=(value, record)=>{
-	const userContext = null
-	return (value ? value.displayName : appLocaleName(userContext,"NotAssigned")) 
+const fieldLabels = {
+  id: 'ID',
+  login: '登录',
+  mobile: '手机号码',
+  email: '电子邮件',
+  pwd: '密码',
+  weixinOpenid: '微信openid',
+  weixinAppid: '微信Appid',
+  accessToken: '访问令牌',
+  verificationCode: '验证码',
+  verificationCodeExpire: '验证码过期',
+  lastLoginTime: '最后登录时间',
+  domain: '域',
+  blocking: '屏蔽',
+  currentStatus: '当前状态',
 
 }
 
 const displayColumns = [
-  { title: 'Id', debugtype: 'string', dataIndex: 'id', width: '20', render: (text, record)=>renderTextCell(text,record,'secUser') },
-  { title: 'Login', debugtype: 'string', dataIndex: 'login', width: '9',render: (text, record)=>renderTextCell(text,record) },
-  { title: 'Mobile', debugtype: 'string_china_mobile_phone', dataIndex: 'mobile', width: '15',render: (text, record)=>renderTextCell(text,record) },
-  { title: 'Email', debugtype: 'string', dataIndex: 'email', width: '23',render: (text, record)=>renderTextCell(text,record) },
-  { title: 'Pwd', debugtype: 'string_password', dataIndex: 'pwd', width: '11',render: (text, record)=>renderTextCell(text,record) },
-  { title: 'Verification Code', debugtype: 'int', dataIndex: 'verificationCode', width: '11',render: (text, record)=>renderTextCell(text,record) },
-  { title: 'Verification Code Expire', dataIndex: 'verificationCodeExpire', render: (text, record) =>renderDateTimeCell(text,record)  },
-  { title: 'Last Login Time', dataIndex: 'lastLoginTime', render: (text, record) =>renderDateTimeCell(text,record)  },
-  { title: 'Domain', dataIndex: 'domain', render: (text, record) => renderReferenceCell(text, record)},
-  { title: 'Blocking', dataIndex: 'blocking', render: (text, record) => renderReferenceCell(text, record)},
-  { title: 'Current Status', debugtype: 'string', dataIndex: 'currentStatus', width: '11',render: (text, record)=>renderTextCell(text,record) },
+  { title: fieldLabels.id, debugtype: 'string', dataIndex: 'id', width: '20', render: (text, record)=>renderTextCell(text,record,'secUser') , sorter: true },
+  { title: fieldLabels.login, debugtype: 'string', dataIndex: 'login', width: '9',render: (text, record)=>renderTextCell(text,record)},
+  { title: fieldLabels.mobile, debugtype: 'string_china_mobile_phone', dataIndex: 'mobile', width: '15',render: (text, record)=>renderTextCell(text,record)},
+  { title: fieldLabels.email, debugtype: 'string', dataIndex: 'email', width: '23',render: (text, record)=>renderTextCell(text,record)},
+  { title: fieldLabels.pwd, debugtype: 'string_password', dataIndex: 'pwd', width: '11',render: (text, record)=>renderTextCell(text,record)},
+  { title: fieldLabels.weixinOpenid, debugtype: 'string', dataIndex: 'weixinOpenid', width: '29',render: (text, record)=>renderTextCell(text,record)},
+  { title: fieldLabels.weixinAppid, debugtype: 'string', dataIndex: 'weixinAppid', width: '23',render: (text, record)=>renderTextCell(text,record)},
+  { title: fieldLabels.accessToken, debugtype: 'string', dataIndex: 'accessToken', width: '22',render: (text, record)=>renderTextCell(text,record)},
+  { title: fieldLabels.verificationCode, debugtype: 'int', dataIndex: 'verificationCode', width: '11',render: (text, record)=>renderTextCell(text,record)},
+  { title: fieldLabels.verificationCodeExpire, dataIndex: 'verificationCodeExpire', render: (text, record) =>renderDateTimeCell(text,record), sorter: true},
+  { title: fieldLabels.lastLoginTime, dataIndex: 'lastLoginTime', render: (text, record) =>renderDateTimeCell(text,record), sorter: true},
+  { title: fieldLabels.domain, dataIndex: 'domain', render: (text, record) => renderReferenceCell(text, record), sorter:true},
+  { title: fieldLabels.blocking, dataIndex: 'blocking', render: (text, record) => renderReferenceCell(text, record), sorter:true},
+  { title: fieldLabels.currentStatus, debugtype: 'string', dataIndex: 'currentStatus', width: '11',render: (text, record)=>renderTextCell(text,record)},
 
 ]
+// refernce to https://ant.design/components/list-cn/
+const renderItemOfList=(secUser,targetComponent)=>{
 
-const fieldLabels = {
-  id: 'Id',
-  login: 'Login',
-  mobile: 'Mobile',
-  email: 'Email',
-  pwd: 'Pwd',
-  verificationCode: 'Verification Code',
-  verificationCodeExpire: 'Verification Code Expire',
-  lastLoginTime: 'Last Login Time',
-  domain: 'Domain',
-  blocking: 'Blocking',
-  currentStatus: 'Current Status',
+	
+	
+	
+	const userContext = null
+	return (
+	<div key={secUser.id}>
+	
+	<DescriptionList  key={secUser.id} size="small" col="4">
+<Description term="ID">{secUser.id}</Description> 
+<Description term="登录">{secUser.login}</Description> 
+<Description term="手机号码">{secUser.mobile}</Description> 
+<Description term="电子邮件">{secUser.email}</Description> 
+<Description term="密码">{secUser.pwd}</Description> 
+<Description term="微信openid">{secUser.weixinOpenid}</Description> 
+<Description term="微信Appid">{secUser.weixinAppid}</Description> 
+<Description term="访问令牌">{secUser.accessToken}</Description> 
+<Description term="验证码">{secUser.verificationCode}</Description> 
+<Description term="验证码过期">{ moment(secUser.verificationCodeExpire).format('YYYY-MM-DD')}</Description> 
+<Description term="最后登录时间">{ moment(secUser.lastLoginTime).format('YYYY-MM-DD')}</Description> 
+<Description term="当前状态">{secUser.currentStatus}</Description> 
+	
+        
+      </DescriptionList>
+       <Divider style={{ height: '2px' }} />
+      </div>
+	)
 
 }
+	
 
 
-const SecUserBase={menuData,displayColumns,fieldLabels}
+
+const SecUserBase={menuData,displayColumns,fieldLabels,renderItemOfList}
 export default SecUserBase
 
 

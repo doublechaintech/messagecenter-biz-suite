@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import FontAwesome from 'react-fontawesome';
 import { connect } from 'dva'
 import moment from 'moment'
-import BooleanOption from 'components/BooleanOption';
+import BooleanOption from '../../components/BooleanOption';
 import { Row, Col, Icon, Card, Tabs, Table, Radio, DatePicker, Tooltip, Menu, Dropdown,Badge, Switch,Select,Form,AutoComplete,Modal } from 'antd'
 import { Link, Route, Redirect} from 'dva/router'
 import numeral from 'numeral'
@@ -26,8 +26,9 @@ const {aggregateDataset,calcKey, defaultHideCloseTrans,
   defaultImageListOf,defaultSettingListOf,defaultBuildTransferModal,
   defaultExecuteTrans,defaultHandleTransferSearch,defaultShowTransferModel,
   defaultRenderExtraHeader,
-  defaultSubListsOf,
-  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers
+  defaultSubListsOf,defaultRenderAnalytics,
+  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers,
+  defaultQuickFunctions, defaultRenderSubjectList,
 }= DashboardTool
 
 
@@ -44,11 +45,12 @@ const imageList =(userApp)=>{return [
 const internalImageListOf = (userApp) =>defaultImageListOf(userApp,imageList)
 
 const optionList =(userApp)=>{return [ 
-	  {"title":'Full Access',"value":userApp.fullAccess,"parameterName":"fullAccess"},
+	  {"title":'完全访问',"value":userApp.fullAccess,"parameterName":"fullAccess"},
 ]}
 
 const buildTransferModal = defaultBuildTransferModal
 const showTransferModel = defaultShowTransferModel
+const internalRenderSubjectList = defaultRenderSubjectList
 const internalSettingListOf = (userApp) =>defaultSettingListOf(userApp, optionList)
 const internalLargeTextOf = (userApp) =>{
 
@@ -80,19 +82,19 @@ const internalSummaryOf = (userApp,targetComponent) =>{
 	const userContext = null
 	return (
 	<DescriptionList className={styles.headerList} size="small" col="4">
-<Description term="Id">{userApp.id}</Description> 
-<Description term="Title">{userApp.title}</Description> 
-<Description term="Sec User">{userApp.secUser==null?appLocaleName(userContext,"NotAssigned"):userApp.secUser.displayName}
+<Description term="ID">{userApp.id}</Description> 
+<Description term="标题">{userApp.title}</Description> 
+<Description term="安全用户">{userApp.secUser==null?appLocaleName(userContext,"NotAssigned"):`${userApp.secUser.displayName}(${userApp.secUser.id})`}
  <Icon type="swap" onClick={()=>
-  showTransferModel(targetComponent,"Sec User","secUser",UserAppService.requestCandidateSecUser,
+  showTransferModel(targetComponent,"安全用户","secUser",UserAppService.requestCandidateSecUser,
 	      UserAppService.transferToAnotherSecUser,"anotherSecUserId",userApp.secUser?userApp.secUser.id:"")} 
   style={{fontSize: 20,color:"red"}} />
 </Description>
-<Description term="App Icon">{userApp.appIcon}</Description> 
-<Description term="Permission">{userApp.permission}</Description> 
-<Description term="Object Type">{userApp.objectType}</Description> 
-<Description term="Object Id">{userApp.objectId}</Description> 
-<Description term="Location">{userApp.location}</Description> 
+<Description term="应用程序图标">{userApp.appIcon}</Description> 
+<Description term="许可">{userApp.permission}</Description> 
+<Description term="访问对象类型">{userApp.objectType}</Description> 
+<Description term="对象ID">{userApp.objectId}</Description> 
+<Description term="位置">{userApp.location}</Description> 
 	
         {buildTransferModal(userApp,targetComponent)}
       </DescriptionList>
@@ -100,6 +102,7 @@ const internalSummaryOf = (userApp,targetComponent) =>{
 
 }
 
+const internalQuickFunctions = defaultQuickFunctions
 
 class UserAppDashboard extends Component {
 
@@ -129,11 +132,11 @@ class UserAppDashboard extends Component {
     }
     const returnURL = this.props.returnURL
     
-    const cardsData = {cardsName:"User App",cardsFor: "userApp",
+    const cardsData = {cardsName:"用户应用程序",cardsFor: "userApp",
     	cardsSource: this.props.userApp,returnURL,displayName,
   		subItems: [
-{name: 'listAccessList', displayName:'List Access',type:'listAccess',count:listAccessCount,addFunction: true, role: 'listAccess', metaInfo: listAccessListMetaInfo},
-{name: 'objectAccessList', displayName:'Object Access',type:'objectAccess',count:objectAccessCount,addFunction: true, role: 'objectAccess', metaInfo: objectAccessListMetaInfo},
+{name: 'listAccessList', displayName:'访问列表',type:'listAccess',count:listAccessCount,addFunction: true, role: 'listAccess', metaInfo: listAccessListMetaInfo, renderItem: GlobalComponents.ListAccessBase.renderItemOfList},
+{name: 'objectAccessList', displayName:'对象访问',type:'objectAccess',count:objectAccessCount,addFunction: true, role: 'objectAccess', metaInfo: objectAccessListMetaInfo, renderItem: GlobalComponents.ObjectAccessBase.renderItemOfList},
     
       	],
   	};
@@ -146,6 +149,10 @@ class UserAppDashboard extends Component {
     const summaryOf = this.props.summaryOf || internalSummaryOf
     const renderTitle = this.props.renderTitle || internalRenderTitle
     const renderExtraFooter = this.props.renderExtraFooter || internalRenderExtraFooter
+    const renderAnalytics = this.props.renderAnalytics || defaultRenderAnalytics
+    const quickFunctions = this.props.quickFunctions || internalQuickFunctions
+    const renderSubjectList = this.props.renderSubjectList || internalRenderSubjectList
+    
     return (
 
       <PageHeaderLayout
@@ -153,15 +160,18 @@ class UserAppDashboard extends Component {
         content={summaryOf(cardsData.cardsSource,this)}
         wrapperClassName={styles.advancedForm}
       >
-      {renderExtraHeader(cardsData.cardsSource)}
-        <div>
+       
+        {renderExtraHeader(cardsData.cardsSource)}
+        {quickFunctions(cardsData)} 
+        {renderAnalytics(cardsData.cardsSource)}
         {settingListOf(cardsData.cardsSource)}
-        {imageListOf(cardsData.cardsSource)}
-        {subListsOf(cardsData)} 
+        {imageListOf(cardsData.cardsSource)}  
+        {renderSubjectList(cardsData)}       
         {largeTextOf(cardsData.cardsSource)}
-          
-        </div>
+        {renderExtraFooter(cardsData.cardsSource)}
+  		
       </PageHeaderLayout>
+    
     )
   }
 }

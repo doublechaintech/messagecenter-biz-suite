@@ -56,9 +56,9 @@ public class Profile extends BaseEntity implements  java.io.Serializable{
 	
 		
 	public 	Profile(){
-		//lazy load for all the properties
+		// lazy load for all the properties
 	}
-	//disconnect from all, 中文就是一了百了，跟所有一切尘世断绝往来藏身于茫茫数据海洋
+	// disconnect from all, 中文就是一了百了，跟所有一切尘世断绝往来藏身于茫茫数据海洋
 	public 	void clearFromAll(){
 		setPlatform( null );
 
@@ -476,6 +476,22 @@ public class Profile extends BaseEntity implements  java.io.Serializable{
 
 		}
 		super.copyTo(baseDest);
+		return baseDest;
+	}
+	
+	public BaseEntity mergePrimitiveDataTo(BaseEntity baseDest){
+		
+		
+		if(baseDest instanceof Profile){
+		
+			
+			Profile dest =(Profile)baseDest;
+		
+			dest.mergeId(getId());
+			dest.mergeName(getName());
+			dest.mergeVersion(getVersion());
+
+		}
 		return baseDest;
 	}
 	

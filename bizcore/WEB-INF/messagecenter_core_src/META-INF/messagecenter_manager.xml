@@ -27,7 +27,7 @@
 	<bean id="secUserManager" class="com.doublechaintech.messagecenter.secuser.SecUserCustomManagerImpl" parent="secUserManagerBase" ></bean>
 	
 	<bean id="secUserBlockingManagerBase" class="com.doublechaintech.messagecenter.secuserblocking.SecUserBlockingManagerImpl"/>
-	<bean id="secUserBlockingManager" class="com.doublechaintech.messagecenter.secuserblocking.SecUserBlockingCustomManagerImpl" parent="secUserBlockingManagerBase" ></bean>
+	<bean id="secUserBlockingManager" class="com.doublechaintech.messagecenter.secuserblocking.SecUserBlockingManagerImpl" parent="secUserBlockingManagerBase" ></bean>
 	
 	<bean id="userAppManagerBase" class="com.doublechaintech.messagecenter.userapp.UserAppManagerImpl"/>
 	<bean id="userAppManager" class="com.doublechaintech.messagecenter.userapp.UserAppCustomManagerImpl" parent="userAppManagerBase" ></bean>
@@ -80,9 +80,6 @@
 
 
 </beans>
-
-
-
 
 
 

@@ -7,6 +7,9 @@ import com.doublechaintech.messagecenter.BaseEntity;
 import com.doublechaintech.messagecenter.SmartList;
 import com.doublechaintech.messagecenter.MultipleAccessKey;
 import com.doublechaintech.messagecenter.MessagecenterUserContext;
+
+import com.doublechaintech.messagecenter.userapp.UserApp;
+
 import com.doublechaintech.messagecenter.userapp.UserAppDAO;
 
 
@@ -50,6 +53,7 @@ public interface ListAccessDAO{
  	public void analyzeListAccessByApp(SmartList<ListAccess> resultList, String userAppId, Map<String,Object> options);
 
  
- }
+ 
+}
 
 

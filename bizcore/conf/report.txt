@@ -1,7 +1,7 @@
 
 
 
-=================Execute Report (Model Time 190228T2340) @Thu Feb 28 23:41:27 CST 2019, 16 objects and 125 fields===========================
+=================Execute Report (Model Time 190320T1436) @Thu Jul 18 16:11:47 CST 2019, 16 objects and 128 fields===========================
 
 
 
@@ -49,8 +49,8 @@ platform{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(2){
-		profileList	platform(基本信息)--platform;
-		privateMessageList	platform(基本信息)--platform;
+		profileList	platform(__no_group)--platform;
+		privateMessageList	platform(__no_group)--platform;
 	}
 } depth=0; isRoot = true
 
@@ -62,8 +62,8 @@ profile{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(2){
-		privateMessageListAsSender	sender(基本信息)--sender;
-		privateMessageListAsReceiver	receiver(基本信息)--sender;
+		privateMessageListAsSender	sender(__no_group)--sender;
+		privateMessageListAsReceiver	receiver(__no_group)--sender;
 	}
 } depth=1; isRoot = false
 
@@ -93,8 +93,8 @@ platform{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(2){
-		profileList	platform(基本信息)--platform;
-		privateMessageList	platform(基本信息)--platform;
+		profileList	platform(__no_group)--platform;
+		privateMessageList	platform(__no_group)--platform;
 	}
 } depth=0; isRoot = true
 
@@ -106,8 +106,8 @@ profile{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(2){
-		privateMessageListAsSender	sender(基本信息)--sender;
-		privateMessageListAsReceiver	receiver(基本信息)--sender;
+		privateMessageListAsSender	sender(__no_group)--sender;
+		privateMessageListAsReceiver	receiver(__no_group)--sender;
 	}
 } depth=1; isRoot = false
 
@@ -135,8 +135,8 @@ user_domain{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(2){
-		userWhiteListList	domain(基本信息)--domain;
-		secUserList	domain(基本信息)--domain;
+		userWhiteListList	domain(__no_group)--domain;
+		secUserList	domain(__no_group)--domain;
 	}
 } depth=0; isRoot = true
 
@@ -153,12 +153,15 @@ user_white_list{
 } depth=1; isRoot = false
 
 sec_user{
-	fields(12){
+	fields(15){
 		string	id('ABCDEFGIJK000001'), verb: false, required: true;
 		string	login('login'), verb: false, required: true;
 		string_china_mobile_phone	mobile('13900000001'), verb: false, required: true;
 		string	email('|suddy_chang@163.com'), verb: false, required: false;
 		string_password	pwd('*******'), verb: false, required: true;
+		string	weixin_openid('wx123456789abcdefghijklmn'), verb: false, required: true;
+		string	weixin_appid('wxapp12098410239840'), verb: false, required: true;
+		string	access_token('jwt_token_12345678'), verb: false, required: true;
 		int	verification_code('0|9999999'), verb: false, required: true;
 		date_time	verification_code_expire('2099-12-31T09:09:09'), verb: false, required: true;
 		date_time	last_login_time('2099-12-31T09:09:09'), verb: false, required: true;
@@ -168,8 +171,8 @@ sec_user{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(2){
-		userAppList	sec_user(基本信息)--sec_user;
-		loginHistoryList	sec_user(基本信息)--sec_user;
+		userAppList	sec_user(__no_group)--sec_user;
+		loginHistoryList	sec_user(__no_group)--sec_user;
 	}
 } depth=1; isRoot = false
 
@@ -182,7 +185,7 @@ sec_user_blocking{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(1){
-		secUserList	blocking(基本信息)--blocking;
+		secUserList	blocking(__no_group)--blocking;
 	}
 } depth=0; isRoot = true
 
@@ -200,8 +203,8 @@ user_app{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(2){
-		listAccessList	app(基本信息)--app;
-		objectAccessList	app(基本信息)--app;
+		listAccessList	app(__no_group)--app;
+		objectAccessList	app(__no_group)--app;
 	}
 } depth=2; isRoot = false
 
@@ -264,10 +267,10 @@ generic_form{
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(4){
-		formMessageList	form(基本信息)--form;
-		formFieldMessageList	form(基本信息)--form;
-		formFieldList	form(基本信息)--form;
-		formActionList	form(基本信息)--form;
+		formMessageList	form(__no_group)--form;
+		formFieldMessageList	form(__no_group)--form;
+		formFieldList	form(__no_group)--form;
+		formActionList	form(__no_group)--form;
 	}
 } depth=0; isRoot = true
 

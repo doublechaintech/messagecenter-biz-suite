@@ -1,5 +1,5 @@
 
-
+import React from 'react'
 import pathToRegexp from 'path-to-regexp'
 import { routerRedux } from 'dva/router'
 import { notification } from 'antd'
@@ -137,7 +137,7 @@ export default {
       }
       const partialList = true
       const newState = {...data, partialList}
-      const location = { pathname: `/profile/${id}/list/\PrivateMessageListAsSender/Private Message+${appLocaleName(userContext,'List')}`, state: newState }
+      const location = { pathname: `/profile/${id}/list/PrivateMessageListAsSender/私信+${appLocaleName(userContext,'List')}`, state: newState }
       yield put(routerRedux.push(location))
     },
     *updatePrivateMessageAsSender({ payload }, { call, put }) {
@@ -159,7 +159,7 @@ export default {
       if (continueNext) {
         return
       }
-      const location = { pathname: `/profile/${id}/list/\PrivateMessageListAsSender/Private Message列表`, state: newPlayload }
+      const location = { pathname: `/profile/${id}/list/PrivateMessageListAsSender/私信列表`, state: newPlayload }
       yield put(routerRedux.push(location))
     },
     *gotoNextPrivateMessageUpdateRow({ payload }, { call, put }) {
@@ -206,7 +206,7 @@ export default {
       }
       const partialList = true
       const newState = {...data, partialList}
-      const location = { pathname: `/profile/${id}/list/\PrivateMessageListAsReceiver/Private Message+${appLocaleName(userContext,'List')}`, state: newState }
+      const location = { pathname: `/profile/${id}/list/PrivateMessageListAsReceiver/私信+${appLocaleName(userContext,'List')}`, state: newState }
       yield put(routerRedux.push(location))
     },
     *updatePrivateMessageAsReceiver({ payload }, { call, put }) {
@@ -228,7 +228,7 @@ export default {
       if (continueNext) {
         return
       }
-      const location = { pathname: `/profile/${id}/list/\PrivateMessageListAsReceiver/Private Message列表`, state: newPlayload }
+      const location = { pathname: `/profile/${id}/list/PrivateMessageListAsReceiver/私信列表`, state: newPlayload }
       yield put(routerRedux.push(location))
     },
     *gotoNextPrivateMessageUpdateRow({ payload }, { call, put }) {

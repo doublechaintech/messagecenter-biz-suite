@@ -3,6 +3,8 @@ package com.doublechaintech.messagecenter.loginhistory;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.math.BigDecimal;
@@ -24,7 +26,10 @@ import com.doublechaintech.messagecenter.secuser.SecUserDAO;
 
 
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
+
 
 public class LoginHistoryJDBCTemplateDAO extends MessagecenterNamingServiceDAO implements LoginHistoryDAO{
  
@@ -277,7 +282,7 @@ public class LoginHistoryJDBCTemplateDAO extends MessagecenterNamingServiceDAO i
  
 		StatsItem loginTimeStatsItem = new StatsItem();
 		//LoginHistory.LOGIN_TIME_PROPERTY
-		loginTimeStatsItem.setDisplayName("Login History");
+		loginTimeStatsItem.setDisplayName("登录历史");
 		loginTimeStatsItem.setInternalName(formatKeyForDateLine(LoginHistory.LOGIN_TIME_PROPERTY));
 		loginTimeStatsItem.setResult(statsWithGroup(DateKey.class,wrapWithDate(LoginHistory.LOGIN_TIME_PROPERTY),filterKey,emptyOptions));
 		info.addItem(loginTimeStatsItem);
@@ -530,6 +535,9 @@ public class LoginHistoryJDBCTemplateDAO extends MessagecenterNamingServiceDAO i
 	public void enhanceList(List<LoginHistory> loginHistoryList) {		
 		this.enhanceListInternal(loginHistoryList, this.getLoginHistoryMapper());
 	}
+	
+	
+	
 	@Override
 	public void collectAndEnhance(BaseEntity ownerEntity) {
 		List<LoginHistory> loginHistoryList = ownerEntity.collectRefsWithType(LoginHistory.INTERNAL_TYPE);
@@ -562,6 +570,9 @@ public class LoginHistoryJDBCTemplateDAO extends MessagecenterNamingServiceDAO i
 	public SmartList<LoginHistory> queryList(String sql, Object... parameters) {
 	    return this.queryForList(sql, parameters, this.getLoginHistoryMapper());
 	}
+	
+	
+
 }
 
 

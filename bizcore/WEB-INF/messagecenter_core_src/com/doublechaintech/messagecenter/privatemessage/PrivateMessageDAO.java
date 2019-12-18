@@ -7,6 +7,10 @@ import com.doublechaintech.messagecenter.BaseEntity;
 import com.doublechaintech.messagecenter.SmartList;
 import com.doublechaintech.messagecenter.MultipleAccessKey;
 import com.doublechaintech.messagecenter.MessagecenterUserContext;
+
+import com.doublechaintech.messagecenter.profile.Profile;
+import com.doublechaintech.messagecenter.platform.Platform;
+
 import com.doublechaintech.messagecenter.platform.PlatformDAO;
 import com.doublechaintech.messagecenter.profile.ProfileDAO;
 
@@ -67,6 +71,7 @@ public interface PrivateMessageDAO{
  	public void analyzePrivateMessageByPlatform(SmartList<PrivateMessage> resultList, String platformId, Map<String,Object> options);
 
  
- }
+ 
+}
 
 

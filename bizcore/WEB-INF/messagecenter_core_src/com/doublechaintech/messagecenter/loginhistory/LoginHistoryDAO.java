@@ -7,6 +7,9 @@ import com.doublechaintech.messagecenter.BaseEntity;
 import com.doublechaintech.messagecenter.SmartList;
 import com.doublechaintech.messagecenter.MultipleAccessKey;
 import com.doublechaintech.messagecenter.MessagecenterUserContext;
+
+import com.doublechaintech.messagecenter.secuser.SecUser;
+
 import com.doublechaintech.messagecenter.secuser.SecUserDAO;
 
 
@@ -50,6 +53,7 @@ public interface LoginHistoryDAO{
  	public void analyzeLoginHistoryBySecUser(SmartList<LoginHistory> resultList, String secUserId, Map<String,Object> options);
 
  
- }
+ 
+}
 
 

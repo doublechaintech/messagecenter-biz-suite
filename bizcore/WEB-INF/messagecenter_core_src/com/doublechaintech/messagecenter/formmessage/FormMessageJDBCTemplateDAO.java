@@ -3,6 +3,8 @@ package com.doublechaintech.messagecenter.formmessage;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.math.BigDecimal;
@@ -24,7 +26,10 @@ import com.doublechaintech.messagecenter.genericform.GenericFormDAO;
 
 
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
+
 
 public class FormMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO implements FormMessageDAO{
  
@@ -512,6 +517,9 @@ public class FormMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO im
 	public void enhanceList(List<FormMessage> formMessageList) {		
 		this.enhanceListInternal(formMessageList, this.getFormMessageMapper());
 	}
+	
+	
+	
 	@Override
 	public void collectAndEnhance(BaseEntity ownerEntity) {
 		List<FormMessage> formMessageList = ownerEntity.collectRefsWithType(FormMessage.INTERNAL_TYPE);
@@ -544,6 +552,9 @@ public class FormMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO im
 	public SmartList<FormMessage> queryList(String sql, Object... parameters) {
 	    return this.queryForList(sql, parameters, this.getFormMessageMapper());
 	}
+	
+	
+
 }
 
 

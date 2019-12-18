@@ -7,6 +7,10 @@ import com.doublechaintech.messagecenter.BaseEntity;
 import com.doublechaintech.messagecenter.SmartList;
 import com.doublechaintech.messagecenter.MultipleAccessKey;
 import com.doublechaintech.messagecenter.MessagecenterUserContext;
+
+import com.doublechaintech.messagecenter.platform.Platform;
+import com.doublechaintech.messagecenter.privatemessage.PrivateMessage;
+
 import com.doublechaintech.messagecenter.platform.PlatformDAO;
 import com.doublechaintech.messagecenter.privatemessage.PrivateMessageDAO;
 
@@ -71,6 +75,13 @@ public interface ProfileDAO{
  	public void analyzeProfileByPlatform(SmartList<Profile> resultList, String platformId, Map<String,Object> options);
 
  
- }
+ 
+	// 需要一个加载引用我的对象的enhance方法:PrivateMessage的sender的PrivateMessageListAsSender
+	public SmartList<PrivateMessage> loadOurPrivateMessageListAsSender(MessagecenterUserContext userContext, List<Profile> us, Map<String,Object> options) throws Exception;
+	
+	// 需要一个加载引用我的对象的enhance方法:PrivateMessage的receiver的PrivateMessageListAsReceiver
+	public SmartList<PrivateMessage> loadOurPrivateMessageListAsReceiver(MessagecenterUserContext userContext, List<Profile> us, Map<String,Object> options) throws Exception;
+	
+}
 
 
