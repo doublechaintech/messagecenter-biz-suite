@@ -3,6 +3,8 @@ package com.doublechaintech.messagecenter.objectaccess;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.math.BigDecimal;
@@ -24,7 +26,10 @@ import com.doublechaintech.messagecenter.userapp.UserAppDAO;
 
 
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
+
 
 public class ObjectAccessJDBCTemplateDAO extends MessagecenterNamingServiceDAO implements ObjectAccessDAO{
  
@@ -530,6 +535,9 @@ public class ObjectAccessJDBCTemplateDAO extends MessagecenterNamingServiceDAO i
 	public void enhanceList(List<ObjectAccess> objectAccessList) {		
 		this.enhanceListInternal(objectAccessList, this.getObjectAccessMapper());
 	}
+	
+	
+	
 	@Override
 	public void collectAndEnhance(BaseEntity ownerEntity) {
 		List<ObjectAccess> objectAccessList = ownerEntity.collectRefsWithType(ObjectAccess.INTERNAL_TYPE);
@@ -562,6 +570,9 @@ public class ObjectAccessJDBCTemplateDAO extends MessagecenterNamingServiceDAO i
 	public SmartList<ObjectAccess> queryList(String sql, Object... parameters) {
 	    return this.queryForList(sql, parameters, this.getObjectAccessMapper());
 	}
+	
+	
+
 }
 
 

@@ -1,5 +1,5 @@
 
-
+import React from 'react'
 import pathToRegexp from 'path-to-regexp'
 import { routerRedux } from 'dva/router'
 import { notification } from 'antd'
@@ -137,7 +137,7 @@ export default {
       }
       const partialList = true
       const newState = {...data, partialList}
-      const location = { pathname: `/platform/${id}/list/\ProfileList/Profile+${appLocaleName(userContext,'List')}`, state: newState }
+      const location = { pathname: `/platform/${id}/list/ProfileList/配置文件+${appLocaleName(userContext,'List')}`, state: newState }
       yield put(routerRedux.push(location))
     },
     *updateProfile({ payload }, { call, put }) {
@@ -159,7 +159,7 @@ export default {
       if (continueNext) {
         return
       }
-      const location = { pathname: `/platform/${id}/list/\ProfileList/Profile列表`, state: newPlayload }
+      const location = { pathname: `/platform/${id}/list/ProfileList/配置文件列表`, state: newPlayload }
       yield put(routerRedux.push(location))
     },
     *gotoNextProfileUpdateRow({ payload }, { call, put }) {
@@ -206,7 +206,7 @@ export default {
       }
       const partialList = true
       const newState = {...data, partialList}
-      const location = { pathname: `/platform/${id}/list/\PrivateMessageList/Private Message+${appLocaleName(userContext,'List')}`, state: newState }
+      const location = { pathname: `/platform/${id}/list/PrivateMessageList/私信+${appLocaleName(userContext,'List')}`, state: newState }
       yield put(routerRedux.push(location))
     },
     *updatePrivateMessage({ payload }, { call, put }) {
@@ -228,7 +228,7 @@ export default {
       if (continueNext) {
         return
       }
-      const location = { pathname: `/platform/${id}/list/\PrivateMessageList/Private Message列表`, state: newPlayload }
+      const location = { pathname: `/platform/${id}/list/PrivateMessageList/私信列表`, state: newPlayload }
       yield put(routerRedux.push(location))
     },
     *gotoNextPrivateMessageUpdateRow({ payload }, { call, put }) {

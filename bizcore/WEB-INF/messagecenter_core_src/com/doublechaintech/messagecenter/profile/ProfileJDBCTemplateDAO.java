@@ -3,6 +3,8 @@ package com.doublechaintech.messagecenter.profile;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.math.BigDecimal;
@@ -26,7 +28,10 @@ import com.doublechaintech.messagecenter.privatemessage.PrivateMessageDAO;
 
 
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
+
 
 public class ProfileJDBCTemplateDAO extends MessagecenterNamingServiceDAO implements ProfileDAO{
  
@@ -700,9 +705,9 @@ public class ProfileJDBCTemplateDAO extends MessagecenterNamingServiceDAO implem
 			return profile;
 		}
 		
-		for(PrivateMessage privateMessage: externalPrivateMessageList){
+		for(PrivateMessage privateMessageItem: externalPrivateMessageList){
 
-			privateMessage.clearFromAll();
+			privateMessageItem.clearFromAll();
 		}
 		
 		
@@ -732,9 +737,9 @@ public class ProfileJDBCTemplateDAO extends MessagecenterNamingServiceDAO implem
 			return profile;
 		}
 		
-		for(PrivateMessage privateMessage: externalPrivateMessageList){
-			privateMessage.clearPlatform();
-			privateMessage.clearSender();
+		for(PrivateMessage privateMessageItem: externalPrivateMessageList){
+			privateMessageItem.clearPlatform();
+			privateMessageItem.clearSender();
 			
 		}
 		
@@ -772,9 +777,9 @@ public class ProfileJDBCTemplateDAO extends MessagecenterNamingServiceDAO implem
 			return profile;
 		}
 		
-		for(PrivateMessage privateMessage: externalPrivateMessageList){
+		for(PrivateMessage privateMessageItem: externalPrivateMessageList){
 
-			privateMessage.clearFromAll();
+			privateMessageItem.clearFromAll();
 		}
 		
 		
@@ -804,9 +809,9 @@ public class ProfileJDBCTemplateDAO extends MessagecenterNamingServiceDAO implem
 			return profile;
 		}
 		
-		for(PrivateMessage privateMessage: externalPrivateMessageList){
-			privateMessage.clearPlatform();
-			privateMessage.clearSender();
+		for(PrivateMessage privateMessageItem: externalPrivateMessageList){
+			privateMessageItem.clearPlatform();
+			privateMessageItem.clearSender();
 			
 		}
 		
@@ -1037,6 +1042,55 @@ public class ProfileJDBCTemplateDAO extends MessagecenterNamingServiceDAO implem
 	public void enhanceList(List<Profile> profileList) {		
 		this.enhanceListInternal(profileList, this.getProfileMapper());
 	}
+	
+	
+	// 需要一个加载引用我的对象的enhance方法:PrivateMessage的sender的PrivateMessageListAsSender
+	public SmartList<PrivateMessage> loadOurPrivateMessageListAsSender(MessagecenterUserContext userContext, List<Profile> us, Map<String,Object> options) throws Exception{
+		if (us == null || us.isEmpty()){
+			return new SmartList<>();
+		}
+		Set<String> ids = us.stream().map(it->it.getId()).collect(Collectors.toSet());
+		MultipleAccessKey key = new MultipleAccessKey();
+		key.put(PrivateMessage.SENDER_PROPERTY, ids.toArray(new String[ids.size()]));
+		SmartList<PrivateMessage> loadedObjs = userContext.getDAOGroup().getPrivateMessageDAO().findPrivateMessageWithKey(key, options);
+		Map<String, List<PrivateMessage>> loadedMap = loadedObjs.stream().collect(Collectors.groupingBy(it->it.getSender().getId()));
+		us.forEach(it->{
+			String id = it.getId();
+			List<PrivateMessage> loadedList = loadedMap.get(id);
+			if (loadedList == null || loadedList.isEmpty()) {
+				return;
+			}
+			SmartList<PrivateMessage> loadedSmartList = new SmartList<>();
+			loadedSmartList.addAll(loadedList);
+			it.setPrivateMessageListAsSender(loadedSmartList);
+		});
+		return loadedObjs;
+	}
+	
+	// 需要一个加载引用我的对象的enhance方法:PrivateMessage的receiver的PrivateMessageListAsReceiver
+	public SmartList<PrivateMessage> loadOurPrivateMessageListAsReceiver(MessagecenterUserContext userContext, List<Profile> us, Map<String,Object> options) throws Exception{
+		if (us == null || us.isEmpty()){
+			return new SmartList<>();
+		}
+		Set<String> ids = us.stream().map(it->it.getId()).collect(Collectors.toSet());
+		MultipleAccessKey key = new MultipleAccessKey();
+		key.put(PrivateMessage.RECEIVER_PROPERTY, ids.toArray(new String[ids.size()]));
+		SmartList<PrivateMessage> loadedObjs = userContext.getDAOGroup().getPrivateMessageDAO().findPrivateMessageWithKey(key, options);
+		Map<String, List<PrivateMessage>> loadedMap = loadedObjs.stream().collect(Collectors.groupingBy(it->it.getReceiver().getId()));
+		us.forEach(it->{
+			String id = it.getId();
+			List<PrivateMessage> loadedList = loadedMap.get(id);
+			if (loadedList == null || loadedList.isEmpty()) {
+				return;
+			}
+			SmartList<PrivateMessage> loadedSmartList = new SmartList<>();
+			loadedSmartList.addAll(loadedList);
+			it.setPrivateMessageListAsReceiver(loadedSmartList);
+		});
+		return loadedObjs;
+	}
+	
+	
 	@Override
 	public void collectAndEnhance(BaseEntity ownerEntity) {
 		List<Profile> profileList = ownerEntity.collectRefsWithType(Profile.INTERNAL_TYPE);
@@ -1069,6 +1123,9 @@ public class ProfileJDBCTemplateDAO extends MessagecenterNamingServiceDAO implem
 	public SmartList<Profile> queryList(String sql, Object... parameters) {
 	    return this.queryForList(sql, parameters, this.getProfileMapper());
 	}
+	
+	
+
 }
 
 

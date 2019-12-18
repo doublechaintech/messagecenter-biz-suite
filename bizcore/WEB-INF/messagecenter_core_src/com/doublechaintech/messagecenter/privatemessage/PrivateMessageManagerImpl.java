@@ -267,8 +267,9 @@ public class PrivateMessageManagerImpl extends CustomMessagecenterCheckerManager
 			//will be good when the privateMessage loaded from this JVM process cache.
 			//also good when there is a ram based DAO implementation
 			//make changes to PrivateMessage.
-			
-			
+			if (privateMessage.isChanged()){
+			privateMessage.updateReadTime(userContext.now());
+			}
 			privateMessage = savePrivateMessage(userContext, privateMessage, options);
 			return privateMessage;
 			

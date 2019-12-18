@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import FontAwesome from 'react-fontawesome';
 import { connect } from 'dva'
 import moment from 'moment'
-import BooleanOption from 'components/BooleanOption';
+import BooleanOption from '../../components/BooleanOption';
 import { Row, Col, Icon, Card, Tabs, Table, Radio, DatePicker, Tooltip, Menu, Dropdown,Badge, Switch,Select,Form,AutoComplete,Modal } from 'antd'
 import { Link, Route, Redirect} from 'dva/router'
 import numeral from 'numeral'
@@ -26,8 +26,9 @@ const {aggregateDataset,calcKey, defaultHideCloseTrans,
   defaultImageListOf,defaultSettingListOf,defaultBuildTransferModal,
   defaultExecuteTrans,defaultHandleTransferSearch,defaultShowTransferModel,
   defaultRenderExtraHeader,
-  defaultSubListsOf,
-  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers
+  defaultSubListsOf,defaultRenderAnalytics,
+  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers,
+  defaultQuickFunctions, defaultRenderSubjectList,
 }= DashboardTool
 
 
@@ -48,6 +49,7 @@ const optionList =(platform)=>{return [
 
 const buildTransferModal = defaultBuildTransferModal
 const showTransferModel = defaultShowTransferModel
+const internalRenderSubjectList = defaultRenderSubjectList
 const internalSettingListOf = (platform) =>defaultSettingListOf(platform, optionList)
 const internalLargeTextOf = (platform) =>{
 
@@ -79,10 +81,10 @@ const internalSummaryOf = (platform,targetComponent) =>{
 	const userContext = null
 	return (
 	<DescriptionList className={styles.headerList} size="small" col="4">
-<Description term="Id">{platform.id}</Description> 
-<Description term="Name">{platform.name}</Description> 
-<Description term="Introduction">{platform.introduction}</Description> 
-<Description term="Current Version">{platform.currentVersion}</Description> 
+<Description term="ID">{platform.id}</Description> 
+<Description term="名称">{platform.name}</Description> 
+<Description term="介绍">{platform.introduction}</Description> 
+<Description term="当前版本">{platform.currentVersion}</Description> 
 	
         {buildTransferModal(platform,targetComponent)}
       </DescriptionList>
@@ -90,6 +92,7 @@ const internalSummaryOf = (platform,targetComponent) =>{
 
 }
 
+const internalQuickFunctions = defaultQuickFunctions
 
 class PlatformDashboard extends Component {
 
@@ -119,11 +122,11 @@ class PlatformDashboard extends Component {
     }
     const returnURL = this.props.returnURL
     
-    const cardsData = {cardsName:"Platform",cardsFor: "platform",
+    const cardsData = {cardsName:"平台",cardsFor: "platform",
     	cardsSource: this.props.platform,returnURL,displayName,
   		subItems: [
-{name: 'profileList', displayName:'Profile',type:'profile',count:profileCount,addFunction: true, role: 'profile', metaInfo: profileListMetaInfo},
-{name: 'privateMessageList', displayName:'Private Message',type:'privateMessage',count:privateMessageCount,addFunction: true, role: 'privateMessage', metaInfo: privateMessageListMetaInfo},
+{name: 'profileList', displayName:'配置文件',type:'profile',count:profileCount,addFunction: true, role: 'profile', metaInfo: profileListMetaInfo, renderItem: GlobalComponents.ProfileBase.renderItemOfList},
+{name: 'privateMessageList', displayName:'私信',type:'privateMessage',count:privateMessageCount,addFunction: true, role: 'privateMessage', metaInfo: privateMessageListMetaInfo, renderItem: GlobalComponents.PrivateMessageBase.renderItemOfList},
     
       	],
   	};
@@ -136,6 +139,10 @@ class PlatformDashboard extends Component {
     const summaryOf = this.props.summaryOf || internalSummaryOf
     const renderTitle = this.props.renderTitle || internalRenderTitle
     const renderExtraFooter = this.props.renderExtraFooter || internalRenderExtraFooter
+    const renderAnalytics = this.props.renderAnalytics || defaultRenderAnalytics
+    const quickFunctions = this.props.quickFunctions || internalQuickFunctions
+    const renderSubjectList = this.props.renderSubjectList || internalRenderSubjectList
+    
     return (
 
       <PageHeaderLayout
@@ -143,15 +150,18 @@ class PlatformDashboard extends Component {
         content={summaryOf(cardsData.cardsSource,this)}
         wrapperClassName={styles.advancedForm}
       >
-      {renderExtraHeader(cardsData.cardsSource)}
-        <div>
+       
+        {renderExtraHeader(cardsData.cardsSource)}
+        {quickFunctions(cardsData)} 
+        {renderAnalytics(cardsData.cardsSource)}
         {settingListOf(cardsData.cardsSource)}
-        {imageListOf(cardsData.cardsSource)}
-        {subListsOf(cardsData)} 
+        {imageListOf(cardsData.cardsSource)}  
+        {renderSubjectList(cardsData)}       
         {largeTextOf(cardsData.cardsSource)}
-          
-        </div>
+        {renderExtraFooter(cardsData.cardsSource)}
+  		
       </PageHeaderLayout>
+    
     )
   }
 }

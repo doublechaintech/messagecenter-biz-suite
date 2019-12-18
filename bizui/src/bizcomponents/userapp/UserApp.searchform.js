@@ -102,7 +102,7 @@ componentDidMount() {
     }
   }
   */
-  buildStringSearchParameters = (formValues, searchVerb, fieldName) => {
+  buildStringSearchParameters = (listName, formValues, searchVerb, fieldName) => {
     const fieldValue = formValues[fieldName]
     if (!fieldValue) {
       return null
@@ -111,9 +111,9 @@ componentDidMount() {
     //paramHolder.length
     const value = {}
 
-    value[`userAppList.searchField`] = fieldName
-    value[`userAppList.searchVerb`] =  searchVerb
-    value[`userAppList.searchValue`] = fieldValue
+    value[`${listName}.searchField`] = fieldName
+    value[`${listName}.searchVerb`] =  searchVerb
+    value[`${listName}.searchValue`] = fieldValue
     
     return value
 
@@ -127,16 +127,17 @@ componentDidMount() {
     form.validateFields((err, fieldsValue) => {
       if (err) return
       const paramList = []
-      
+      const { owner } = this.props
+      const {listName} = owner
      
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'id'))
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'title'))
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'eq', 'secUser'))
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'appIcon'))
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'permission'))
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'objectType'))
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'objectId'))
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'location'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(listName, fieldsValue,'contains', 'id'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(listName, fieldsValue,'contains', 'title'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(listName, fieldsValue,'eq', 'secUser'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(listName, fieldsValue,'contains', 'appIcon'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(listName, fieldsValue,'contains', 'permission'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(listName, fieldsValue,'contains', 'objectType'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(listName, fieldsValue,'contains', 'objectId'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(listName, fieldsValue,'contains', 'location'))
 
      
       console.log("the final parameter", paramList)
@@ -152,11 +153,12 @@ componentDidMount() {
 
       }
      
-      params['userAppList'] = 1
-      params['userAppList.orderBy.0'] = "id"
-      params['userAppList.descOrAsc.0'] = "desc"
       
-      const { owner } = this.props
+      params[`${listName}`] = 1
+      params[`${listName}.orderBy.0`] = "id"
+      params[`${listName}.descOrAsc.0`] = "desc"
+      
+      
       const expandForm = overrideValue([this.state.expandForm],false)
       dispatch({
         type: `${owner.type}/load`,
@@ -194,25 +196,25 @@ componentDidMount() {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
 
        <Col md={8} sm={24}>
-         <FormItem label="Id">
+         <FormItem label="ID">
            {getFieldDecorator('id')(
-             <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+             <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
            )}
          </FormItem>
        </Col>
 
        <Col md={8} sm={24}>
-         <FormItem label="Title">
+         <FormItem label="标题">
            {getFieldDecorator('title')(
-             <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+             <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
            )}
          </FormItem>
        </Col>
 
           <Col md={8} sm={24}>
             <span className={styles.submitButtons}>
-              <Button type="primary" htmlType="submit">{appLocaleName(userContext,"Search")}</Button>
-              <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>{appLocaleName(userContext,"Reset")}</Button>
+              <Button  icon="search" type="primary" htmlType="submit">{appLocaleName(userContext,"Search")}</Button>
+              <Button  icon="undo" style={{ marginLeft: 8 }} onClick={this.handleFormReset}>{appLocaleName(userContext,"Reset")}</Button>
               <a style={{ marginLeft: 8 }} onClick={this.toggleForm}> {appLocaleName(userContext,"Expand")} <Icon type="down" /> </a>
             </span>
           </Col>
@@ -249,22 +251,22 @@ componentDidMount() {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
 
           <Col md={8} sm={24}>
-            <FormItem label="Id">
+            <FormItem label="ID">
               {getFieldDecorator('id')(
-                <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+                <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
               )}
             </FormItem>
           </Col>
 
           <Col md={8} sm={24}>
-            <FormItem label="Title">
+            <FormItem label="标题">
               {getFieldDecorator('title')(
-                <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+                <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
               )}
             </FormItem>
           </Col>
  <Col md={8} sm={24}>
-                    <Form.Item label="Sec User">
+                    <Form.Item label="安全用户">
                   {getFieldDecorator('secUser', {
                     initialValue: tryinit('secUser'),
                    
@@ -280,41 +282,41 @@ componentDidMount() {
                 </Form.Item></Col>
 
           <Col md={8} sm={24}>
-            <FormItem label="App Icon">
+            <FormItem label="应用程序图标">
               {getFieldDecorator('appIcon')(
-                <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+                <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
               )}
             </FormItem>
           </Col>
 
           <Col md={8} sm={24}>
-            <FormItem label="Permission">
+            <FormItem label="许可">
               {getFieldDecorator('permission')(
-                <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+                <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
               )}
             </FormItem>
           </Col>
 
           <Col md={8} sm={24}>
-            <FormItem label="Object Type">
+            <FormItem label="访问对象类型">
               {getFieldDecorator('objectType')(
-                <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+                <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
               )}
             </FormItem>
           </Col>
 
           <Col md={8} sm={24}>
-            <FormItem label="Object Id">
+            <FormItem label="对象ID">
               {getFieldDecorator('objectId')(
-                <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+                <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
               )}
             </FormItem>
           </Col>
 
           <Col md={8} sm={24}>
-            <FormItem label="Location">
+            <FormItem label="位置">
               {getFieldDecorator('location')(
-                <Input placeholder={appLocaleName(userContext,"PleaseInput")} />
+                <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
               )}
             </FormItem>
           </Col>
@@ -322,8 +324,8 @@ componentDidMount() {
         </Row>
         <div style={{ overflow: 'hidden' }}>
           <span style={{ float: 'right', marginBottom: 24 }}>
-            <Button type="primary" htmlType="submit">{appLocaleName(userContext,"Search")}</Button>
-            <Button style={{ marginLeft: 8 }} onClick={this.handleFormReset}>{appLocaleName(userContext,"Reset")}</Button>
+            <Button type="primary" icon="search" htmlType="submit">{appLocaleName(userContext,"Search")}</Button>
+            <Button icon="undo" style={{ marginLeft: 8 }} onClick={this.handleFormReset}>{appLocaleName(userContext,"Reset")}</Button>
             <a style={{ marginLeft: 8 }} onClick={this.toggleForm}>{appLocaleName(userContext,"Collapse")} <Icon type="up" /></a>
           </span>
         </div>

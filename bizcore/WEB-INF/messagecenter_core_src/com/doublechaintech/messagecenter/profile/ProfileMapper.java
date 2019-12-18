@@ -56,10 +56,10 @@ public class ProfileMapper extends BaseRowMapper<Profile>{
  		if( platformId.isEmpty()){
  			return;
  		}
- 		Platform platform = profile.getPlatform();
- 		if( platform != null ){
+ 		Platform lplatform = profile.getPlatform();
+ 		if( lplatform != null ){
  			//if the root object 'profile' already have the property, just set the id for it;
- 			platform.setId(platformId);
+ 			lplatform.setId(platformId);
  			
  			return;
  		}

@@ -128,12 +128,15 @@
 
 	<div class="row">
 <c:set var="profile" value="${ result.sender}" scope="request" />
+<c:set var="referName" value="(sender)" scope="request" />
 <sky:include page="com/doublechaintech/messagecenter/profile/Profile$Info.jsp" />
 
 <c:set var="profile" value="${ result.receiver}" scope="request" />
+<c:set var="referName" value="(receiver)" scope="request" />
 <sky:include page="com/doublechaintech/messagecenter/profile/Profile$Info.jsp" />
 
 <c:set var="platform" value="${ result.platform}" scope="request" />
+<c:set var="referName" value="" scope="request" />
 <sky:include page="com/doublechaintech/messagecenter/platform/Platform$Info.jsp" />
 
 </div>

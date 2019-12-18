@@ -7,6 +7,10 @@ import com.doublechaintech.messagecenter.BaseEntity;
 import com.doublechaintech.messagecenter.SmartList;
 import com.doublechaintech.messagecenter.MultipleAccessKey;
 import com.doublechaintech.messagecenter.MessagecenterUserContext;
+
+import com.doublechaintech.messagecenter.profile.Profile;
+import com.doublechaintech.messagecenter.privatemessage.PrivateMessage;
+
 import com.doublechaintech.messagecenter.privatemessage.PrivateMessageDAO;
 import com.doublechaintech.messagecenter.profile.ProfileDAO;
 
@@ -65,6 +69,13 @@ public interface PlatformDAO{
 	
 	
 	public SmartList<Platform> queryList(String sql, Object ... parmeters);
+
+	// 需要一个加载引用我的对象的enhance方法:Profile的platform的ProfileList
+	public SmartList<Profile> loadOurProfileList(MessagecenterUserContext userContext, List<Platform> us, Map<String,Object> options) throws Exception;
+	
+	// 需要一个加载引用我的对象的enhance方法:PrivateMessage的platform的PrivateMessageList
+	public SmartList<PrivateMessage> loadOurPrivateMessageList(MessagecenterUserContext userContext, List<Platform> us, Map<String,Object> options) throws Exception;
+	
 }
 
 

@@ -1,11 +1,86 @@
 package com.doublechaintech.messagecenter;
+import com.terapico.caf.DateTime;
+import com.terapico.uccaf.BaseUserContext;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.Date;
-import com.terapico.uccaf.BaseUserContext;
+import java.util.HashMap;
 import java.util.List;
-import java.math.BigDecimal;
-import com.terapico.caf.DateTime;
+import java.util.Map;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
+
 public class MessagecenterCheckerManager extends BaseManagerImpl {
+	private static class AsyncManagerJob extends Thread {
+		protected Object me;
+		protected Object proxy;
+		protected Method method;
+		protected Object[] args;
+		protected MethodProxy methodProxy;
+
+		public AsyncManagerJob(Object me, Object proxy, Method method, Object[] args, MethodProxy methodProxy) {
+			super();
+			this.me = me;
+			this.proxy = proxy;
+			this.method = method;
+			this.args = args;
+			this.methodProxy = methodProxy;
+		}
+
+		@Override
+		public void run() {
+			try {
+				method.setAccessible(true);
+				method.invoke(me, args);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static final Map<String, Object> EO = new HashMap<>();
+	protected Object asyncProxy = null;
+	protected Object getAsyncProxy() {
+		if (asyncProxy != null) {
+			return asyncProxy;
+		}
+		
+		Object me = this;
+		MethodInterceptor proxy = new MethodInterceptor() {
+
+			@Override
+			public Object intercept(Object proxyObj, Method method, Object[] args, MethodProxy methodProxy)
+					throws Throwable {
+				new AsyncManagerJob(me, proxyObj, method, args, methodProxy).start();
+				return null;
+			}
+		};
+		Enhancer enhancer = new Enhancer();
+		enhancer.setSuperclass(me.getClass());
+		enhancer.setCallback(proxy);
+		return asyncProxy = enhancer.create();
+	}
+	
+	protected void cacheVerifyCode(MessagecenterUserContext ctx, String mobile, String verifyCode) {
+		String cacheKey = "verifyCode:"+mobile;
+		ctx.putToCache(cacheKey, verifyCode, MessagecenterBaseConstants.DEFAULT_CACHE_TIME_FOR_VCODE);
+	}
+
+	protected String getVerifyCodeFromCache(MessagecenterUserContext ctx, String mobile) {
+		String cacheKey = "verifyCode:"+mobile;
+		return (String) ctx.getCachedObject(cacheKey, String.class);
+	}
+	protected void checkVerifyCode(MessagecenterUserContext ctx, String inputVerifyCode, String mobile) throws Exception {
+		String cachedVerifyCode = getVerifyCodeFromCache(ctx, mobile);
+		if (cachedVerifyCode == null) {
+			throw new Exception("请先获取验证码");
+		}
+		if (!cachedVerifyCode.equals(inputVerifyCode)) {
+			throw new Exception("验证码不正确");
+		}
+	}
 	/*
 	
 	
@@ -249,6 +324,30 @@ public class MessagecenterCheckerManager extends BaseManagerImpl {
 		
 	}	 			
 	
+	public static final String  WEIXIN_OPENID_OF_SEC_USER ="sec_user.weixin_openid";
+	protected void checkWeixinOpenidOfSecUser(MessagecenterUserContext userContext, String weixinOpenid, List<Message> messageList)
+	{
+		
+	 	checkStringLengthRange(weixinOpenid,0, 128,WEIXIN_OPENID_OF_SEC_USER, messageList); 		
+		
+	}	 			
+	
+	public static final String  WEIXIN_APPID_OF_SEC_USER ="sec_user.weixin_appid";
+	protected void checkWeixinAppidOfSecUser(MessagecenterUserContext userContext, String weixinAppid, List<Message> messageList)
+	{
+		
+	 	checkStringLengthRange(weixinAppid,0, 128,WEIXIN_APPID_OF_SEC_USER, messageList); 		
+		
+	}	 			
+	
+	public static final String  ACCESS_TOKEN_OF_SEC_USER ="sec_user.access_token";
+	protected void checkAccessTokenOfSecUser(MessagecenterUserContext userContext, String accessToken, List<Message> messageList)
+	{
+		
+	 	checkStringLengthRange(accessToken,0, 128,ACCESS_TOKEN_OF_SEC_USER, messageList); 		
+		
+	}	 			
+	
 	public static final String  VERIFICATION_CODE_OF_SEC_USER ="sec_user.verification_code";
 	protected void checkVerificationCodeOfSecUser(MessagecenterUserContext userContext, int verificationCode, List<Message> messageList)
 	{
@@ -373,7 +472,7 @@ public class MessagecenterCheckerManager extends BaseManagerImpl {
 	protected void checkObjectTypeOfUserApp(MessagecenterUserContext userContext, String objectType, List<Message> messageList)
 	{
 		
-	 	checkStringLengthRange(objectType,5, 108,OBJECT_TYPE_OF_USER_APP, messageList); 		
+	 	checkStringLengthRange(objectType,1, 100,OBJECT_TYPE_OF_USER_APP, messageList); 		
 		
 	}	 			
 	
@@ -413,7 +512,7 @@ public class MessagecenterCheckerManager extends BaseManagerImpl {
 	protected void checkNameOfListAccess(MessagecenterUserContext userContext, String name, List<Message> messageList)
 	{
 		
-	 	checkStringLengthRange(name,2, 200,NAME_OF_LIST_ACCESS, messageList); 		
+	 	checkStringLengthRange(name,1, 200,NAME_OF_LIST_ACCESS, messageList); 		
 		
 	}	 			
 	
@@ -421,7 +520,7 @@ public class MessagecenterCheckerManager extends BaseManagerImpl {
 	protected void checkInternalNameOfListAccess(MessagecenterUserContext userContext, String internalName, List<Message> messageList)
 	{
 		
-	 	checkStringLengthRange(internalName,2, 200,INTERNAL_NAME_OF_LIST_ACCESS, messageList); 		
+	 	checkStringLengthRange(internalName,1, 200,INTERNAL_NAME_OF_LIST_ACCESS, messageList); 		
 		
 	}	 			
 	
@@ -1047,9 +1146,6 @@ public class MessagecenterCheckerManager extends BaseManagerImpl {
 	}
     
 }
-
-
-
 
 
 

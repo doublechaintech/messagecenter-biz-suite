@@ -3,6 +3,8 @@ package com.doublechaintech.messagecenter.privatemessage;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.math.BigDecimal;
@@ -26,7 +28,10 @@ import com.doublechaintech.messagecenter.profile.ProfileDAO;
 
 
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
+
 
 public class PrivateMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO implements PrivateMessageDAO{
  
@@ -364,7 +369,7 @@ public class PrivateMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO
  
 		StatsItem sendTimeStatsItem = new StatsItem();
 		//PrivateMessage.SEND_TIME_PROPERTY
-		sendTimeStatsItem.setDisplayName("Private Message");
+		sendTimeStatsItem.setDisplayName("私信");
 		sendTimeStatsItem.setInternalName(formatKeyForDateLine(PrivateMessage.SEND_TIME_PROPERTY));
 		sendTimeStatsItem.setResult(statsWithGroup(DateKey.class,wrapWithDate(PrivateMessage.SEND_TIME_PROPERTY),filterKey,emptyOptions));
 		info.addItem(sendTimeStatsItem);
@@ -414,7 +419,7 @@ public class PrivateMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO
  
 		StatsItem sendTimeStatsItem = new StatsItem();
 		//PrivateMessage.SEND_TIME_PROPERTY
-		sendTimeStatsItem.setDisplayName("Private Message");
+		sendTimeStatsItem.setDisplayName("私信");
 		sendTimeStatsItem.setInternalName(formatKeyForDateLine(PrivateMessage.SEND_TIME_PROPERTY));
 		sendTimeStatsItem.setResult(statsWithGroup(DateKey.class,wrapWithDate(PrivateMessage.SEND_TIME_PROPERTY),filterKey,emptyOptions));
 		info.addItem(sendTimeStatsItem);
@@ -464,7 +469,7 @@ public class PrivateMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO
  
 		StatsItem sendTimeStatsItem = new StatsItem();
 		//PrivateMessage.SEND_TIME_PROPERTY
-		sendTimeStatsItem.setDisplayName("Private Message");
+		sendTimeStatsItem.setDisplayName("私信");
 		sendTimeStatsItem.setInternalName(formatKeyForDateLine(PrivateMessage.SEND_TIME_PROPERTY));
 		sendTimeStatsItem.setResult(statsWithGroup(DateKey.class,wrapWithDate(PrivateMessage.SEND_TIME_PROPERTY),filterKey,emptyOptions));
 		info.addItem(sendTimeStatsItem);
@@ -781,6 +786,9 @@ public class PrivateMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO
 	public void enhanceList(List<PrivateMessage> privateMessageList) {		
 		this.enhanceListInternal(privateMessageList, this.getPrivateMessageMapper());
 	}
+	
+	
+	
 	@Override
 	public void collectAndEnhance(BaseEntity ownerEntity) {
 		List<PrivateMessage> privateMessageList = ownerEntity.collectRefsWithType(PrivateMessage.INTERNAL_TYPE);
@@ -813,6 +821,9 @@ public class PrivateMessageJDBCTemplateDAO extends MessagecenterNamingServiceDAO
 	public SmartList<PrivateMessage> queryList(String sql, Object... parameters) {
 	    return this.queryForList(sql, parameters, this.getPrivateMessageMapper());
 	}
+	
+	
+
 }
 
 

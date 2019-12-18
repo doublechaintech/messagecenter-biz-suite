@@ -141,7 +141,7 @@ class PlatformAssociateForm extends Component {
                   {getFieldDecorator('name', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Name" />
+                    <Input size="large" placeholder="名称" />
                   )}
                 </Form.Item>
               </Col>
@@ -151,7 +151,7 @@ class PlatformAssociateForm extends Component {
                   {getFieldDecorator('introduction', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Introduction" />
+                    <Input size="large" placeholder="介绍" />
                   )}
                 </Form.Item>
               </Col>
@@ -161,7 +161,7 @@ class PlatformAssociateForm extends Component {
                   {getFieldDecorator('currentVersion', {
                     rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
                   })(
-                    <Input placeholder="请输入Current Version" />
+                    <Input size="large" placeholder="当前版本" />
                   )}
                 </Form.Item>
               </Col>

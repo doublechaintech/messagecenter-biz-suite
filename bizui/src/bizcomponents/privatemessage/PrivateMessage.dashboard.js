@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import FontAwesome from 'react-fontawesome';
 import { connect } from 'dva'
 import moment from 'moment'
-import BooleanOption from 'components/BooleanOption';
+import BooleanOption from '../../components/BooleanOption';
 import { Row, Col, Icon, Card, Tabs, Table, Radio, DatePicker, Tooltip, Menu, Dropdown,Badge, Switch,Select,Form,AutoComplete,Modal } from 'antd'
 import { Link, Route, Redirect} from 'dva/router'
 import numeral from 'numeral'
@@ -26,8 +26,9 @@ const {aggregateDataset,calcKey, defaultHideCloseTrans,
   defaultImageListOf,defaultSettingListOf,defaultBuildTransferModal,
   defaultExecuteTrans,defaultHandleTransferSearch,defaultShowTransferModel,
   defaultRenderExtraHeader,
-  defaultSubListsOf,
-  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers
+  defaultSubListsOf,defaultRenderAnalytics,
+  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers,
+  defaultQuickFunctions, defaultRenderSubjectList,
 }= DashboardTool
 
 
@@ -48,11 +49,12 @@ const optionList =(privateMessage)=>{return [
 
 const buildTransferModal = defaultBuildTransferModal
 const showTransferModel = defaultShowTransferModel
+const internalRenderSubjectList = defaultRenderSubjectList
 const internalSettingListOf = (privateMessage) =>defaultSettingListOf(privateMessage, optionList)
 const internalLargeTextOf = (privateMessage) =>{
 
 	return(<div> 
-   <Card title={`Content`} ><pre>{privateMessage.content}</pre></Card>
+   <Card title={`内容`} ><pre>{privateMessage.content}</pre></Card>
 </div>)
 
 	
@@ -82,23 +84,23 @@ const internalSummaryOf = (privateMessage,targetComponent) =>{
 	const userContext = null
 	return (
 	<DescriptionList className={styles.headerList} size="small" col="4">
-<Description term="Id">{privateMessage.id}</Description> 
-<Description term="Title">{privateMessage.title}</Description> 
-<Description term="Send Time">{ moment(privateMessage.sendTime).format('YYYY-MM-DD')}</Description> 
-<Description term="Read Time">{ moment(privateMessage.readTime).format('YYYY-MM-DD')}</Description> 
-<Description term="Sender">{privateMessage.sender==null?appLocaleName(userContext,"NotAssigned"):privateMessage.sender.displayName}
+<Description term="ID">{privateMessage.id}</Description> 
+<Description term="标题">{privateMessage.title}</Description> 
+<Description term="发送时间">{ moment(privateMessage.sendTime).format('YYYY-MM-DD')}</Description> 
+<Description term="阅读时间">{ moment(privateMessage.readTime).format('YYYY-MM-DD')}</Description> 
+<Description term="发送方">{privateMessage.sender==null?appLocaleName(userContext,"NotAssigned"):`${privateMessage.sender.displayName}(${privateMessage.sender.id})`}
  <Icon type="swap" onClick={()=>
-  showTransferModel(targetComponent,"Sender","profile",PrivateMessageService.requestCandidateSender,
+  showTransferModel(targetComponent,"发送方","profile",PrivateMessageService.requestCandidateSender,
 	      PrivateMessageService.transferToAnotherSender,"anotherSenderId",privateMessage.sender?privateMessage.sender.id:"")} 
   style={{fontSize: 20,color:"red"}} />
 </Description>
-<Description term="Receiver">{privateMessage.receiver==null?appLocaleName(userContext,"NotAssigned"):privateMessage.receiver.displayName}
+<Description term="收货人">{privateMessage.receiver==null?appLocaleName(userContext,"NotAssigned"):`${privateMessage.receiver.displayName}(${privateMessage.receiver.id})`}
  <Icon type="swap" onClick={()=>
-  showTransferModel(targetComponent,"Receiver","profile",PrivateMessageService.requestCandidateReceiver,
+  showTransferModel(targetComponent,"收货人","profile",PrivateMessageService.requestCandidateReceiver,
 	      PrivateMessageService.transferToAnotherReceiver,"anotherReceiverId",privateMessage.receiver?privateMessage.receiver.id:"")} 
   style={{fontSize: 20,color:"red"}} />
 </Description>
-<Description term="Status">{privateMessage.status}</Description> 
+<Description term="状态">{privateMessage.status}</Description> 
 	
         {buildTransferModal(privateMessage,targetComponent)}
       </DescriptionList>
@@ -106,6 +108,7 @@ const internalSummaryOf = (privateMessage,targetComponent) =>{
 
 }
 
+const internalQuickFunctions = defaultQuickFunctions
 
 class PrivateMessageDashboard extends Component {
 
@@ -135,7 +138,7 @@ class PrivateMessageDashboard extends Component {
     }
     const returnURL = this.props.returnURL
     
-    const cardsData = {cardsName:"Private Message",cardsFor: "privateMessage",
+    const cardsData = {cardsName:"私信",cardsFor: "privateMessage",
     	cardsSource: this.props.privateMessage,returnURL,displayName,
   		subItems: [
     
@@ -150,6 +153,10 @@ class PrivateMessageDashboard extends Component {
     const summaryOf = this.props.summaryOf || internalSummaryOf
     const renderTitle = this.props.renderTitle || internalRenderTitle
     const renderExtraFooter = this.props.renderExtraFooter || internalRenderExtraFooter
+    const renderAnalytics = this.props.renderAnalytics || defaultRenderAnalytics
+    const quickFunctions = this.props.quickFunctions || internalQuickFunctions
+    const renderSubjectList = this.props.renderSubjectList || internalRenderSubjectList
+    
     return (
 
       <PageHeaderLayout
@@ -157,15 +164,18 @@ class PrivateMessageDashboard extends Component {
         content={summaryOf(cardsData.cardsSource,this)}
         wrapperClassName={styles.advancedForm}
       >
-      {renderExtraHeader(cardsData.cardsSource)}
-        <div>
+       
+        {renderExtraHeader(cardsData.cardsSource)}
+        {quickFunctions(cardsData)} 
+        {renderAnalytics(cardsData.cardsSource)}
         {settingListOf(cardsData.cardsSource)}
-        {imageListOf(cardsData.cardsSource)}
-        {subListsOf(cardsData)} 
+        {imageListOf(cardsData.cardsSource)}  
+        {renderSubjectList(cardsData)}       
         {largeTextOf(cardsData.cardsSource)}
-          
-        </div>
+        {renderExtraFooter(cardsData.cardsSource)}
+  		
       </PageHeaderLayout>
+    
     )
   }
 }

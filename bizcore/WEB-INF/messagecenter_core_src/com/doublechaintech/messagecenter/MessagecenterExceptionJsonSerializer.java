@@ -120,6 +120,3 @@ public class MessagecenterExceptionJsonSerializer extends  JsonSerializer<Messag
 
 
 
-
-
-

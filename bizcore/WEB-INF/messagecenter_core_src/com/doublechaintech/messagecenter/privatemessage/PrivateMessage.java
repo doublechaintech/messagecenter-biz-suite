@@ -64,9 +64,9 @@ public class PrivateMessage extends BaseEntity implements  java.io.Serializable{
 	
 		
 	public 	PrivateMessage(){
-		//lazy load for all the properties
+		// lazy load for all the properties
 	}
-	//disconnect from all, 中文就是一了百了，跟所有一切尘世断绝往来藏身于茫茫数据海洋
+	// disconnect from all, 中文就是一了百了，跟所有一切尘世断绝往来藏身于茫茫数据海洋
 	public 	void clearFromAll(){
 		setSender( null );
 		setReceiver( null );
@@ -456,6 +456,26 @@ public class PrivateMessage extends BaseEntity implements  java.io.Serializable{
 
 		}
 		super.copyTo(baseDest);
+		return baseDest;
+	}
+	
+	public BaseEntity mergePrimitiveDataTo(BaseEntity baseDest){
+		
+		
+		if(baseDest instanceof PrivateMessage){
+		
+			
+			PrivateMessage dest =(PrivateMessage)baseDest;
+		
+			dest.mergeId(getId());
+			dest.mergeTitle(getTitle());
+			dest.mergeContent(getContent());
+			dest.mergeSendTime(getSendTime());
+			dest.mergeReadTime(getReadTime());
+			dest.mergeStatus(getStatus());
+			dest.mergeVersion(getVersion());
+
+		}
 		return baseDest;
 	}
 	

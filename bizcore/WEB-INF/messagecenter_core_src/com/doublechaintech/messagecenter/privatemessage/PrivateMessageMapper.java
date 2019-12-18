@@ -99,10 +99,10 @@ public class PrivateMessageMapper extends BaseRowMapper<PrivateMessage>{
  		if( profileId.isEmpty()){
  			return;
  		}
- 		Profile profile = privateMessage.getSender();
- 		if( profile != null ){
+ 		Profile lprofile = privateMessage.getSender();
+ 		if( lprofile != null ){
  			//if the root object 'privateMessage' already have the property, just set the id for it;
- 			profile.setId(profileId);
+ 			lprofile.setId(profileId);
  			
  			return;
  		}
@@ -117,10 +117,10 @@ public class PrivateMessageMapper extends BaseRowMapper<PrivateMessage>{
  		if( profileId.isEmpty()){
  			return;
  		}
- 		Profile profile = privateMessage.getReceiver();
- 		if( profile != null ){
+ 		Profile lprofile = privateMessage.getReceiver();
+ 		if( lprofile != null ){
  			//if the root object 'privateMessage' already have the property, just set the id for it;
- 			profile.setId(profileId);
+ 			lprofile.setId(profileId);
  			
  			return;
  		}
@@ -147,10 +147,10 @@ public class PrivateMessageMapper extends BaseRowMapper<PrivateMessage>{
  		if( platformId.isEmpty()){
  			return;
  		}
- 		Platform platform = privateMessage.getPlatform();
- 		if( platform != null ){
+ 		Platform lplatform = privateMessage.getPlatform();
+ 		if( lplatform != null ){
  			//if the root object 'privateMessage' already have the property, just set the id for it;
- 			platform.setId(platformId);
+ 			lplatform.setId(platformId);
  			
  			return;
  		}

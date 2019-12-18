@@ -7,6 +7,10 @@ import com.doublechaintech.messagecenter.BaseEntity;
 import com.doublechaintech.messagecenter.SmartList;
 import com.doublechaintech.messagecenter.MultipleAccessKey;
 import com.doublechaintech.messagecenter.MessagecenterUserContext;
+
+import com.doublechaintech.messagecenter.secuser.SecUser;
+import com.doublechaintech.messagecenter.userwhitelist.UserWhiteList;
+
 import com.doublechaintech.messagecenter.userwhitelist.UserWhiteListDAO;
 import com.doublechaintech.messagecenter.secuser.SecUserDAO;
 
@@ -57,6 +61,13 @@ public interface UserDomainDAO{
 
 	
 	public SmartList<UserDomain> queryList(String sql, Object ... parmeters);
+
+	// 需要一个加载引用我的对象的enhance方法:UserWhiteList的domain的UserWhiteListList
+	public SmartList<UserWhiteList> loadOurUserWhiteListList(MessagecenterUserContext userContext, List<UserDomain> us, Map<String,Object> options) throws Exception;
+	
+	// 需要一个加载引用我的对象的enhance方法:SecUser的domain的SecUserList
+	public SmartList<SecUser> loadOurSecUserList(MessagecenterUserContext userContext, List<UserDomain> us, Map<String,Object> options) throws Exception;
+	
 }
 
 

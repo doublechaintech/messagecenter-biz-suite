@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import FontAwesome from 'react-fontawesome';
 import { connect } from 'dva'
 import moment from 'moment'
-import BooleanOption from 'components/BooleanOption';
+import BooleanOption from '../../components/BooleanOption';
 import { Row, Col, Icon, Card, Tabs, Table, Radio, DatePicker, Tooltip, Menu, Dropdown,Badge, Switch,Select,Form,AutoComplete,Modal } from 'antd'
 import { Link, Route, Redirect} from 'dva/router'
 import numeral from 'numeral'
@@ -26,8 +26,9 @@ const {aggregateDataset,calcKey, defaultHideCloseTrans,
   defaultImageListOf,defaultSettingListOf,defaultBuildTransferModal,
   defaultExecuteTrans,defaultHandleTransferSearch,defaultShowTransferModel,
   defaultRenderExtraHeader,
-  defaultSubListsOf,
-  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers
+  defaultSubListsOf,defaultRenderAnalytics,
+  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers,
+  defaultQuickFunctions, defaultRenderSubjectList,
 }= DashboardTool
 
 
@@ -48,6 +49,7 @@ const optionList =(userWhiteList)=>{return [
 
 const buildTransferModal = defaultBuildTransferModal
 const showTransferModel = defaultShowTransferModel
+const internalRenderSubjectList = defaultRenderSubjectList
 const internalSettingListOf = (userWhiteList) =>defaultSettingListOf(userWhiteList, optionList)
 const internalLargeTextOf = (userWhiteList) =>{
 
@@ -79,9 +81,9 @@ const internalSummaryOf = (userWhiteList,targetComponent) =>{
 	const userContext = null
 	return (
 	<DescriptionList className={styles.headerList} size="small" col="4">
-<Description term="Id">{userWhiteList.id}</Description> 
-<Description term="User Identity">{userWhiteList.userIdentity}</Description> 
-<Description term="User Special Functions">{userWhiteList.userSpecialFunctions}</Description> 
+<Description term="ID">{userWhiteList.id}</Description> 
+<Description term="用户身份">{userWhiteList.userIdentity}</Description> 
+<Description term="用户特殊功能">{userWhiteList.userSpecialFunctions}</Description> 
 	
         {buildTransferModal(userWhiteList,targetComponent)}
       </DescriptionList>
@@ -89,6 +91,7 @@ const internalSummaryOf = (userWhiteList,targetComponent) =>{
 
 }
 
+const internalQuickFunctions = defaultQuickFunctions
 
 class UserWhiteListDashboard extends Component {
 
@@ -118,7 +121,7 @@ class UserWhiteListDashboard extends Component {
     }
     const returnURL = this.props.returnURL
     
-    const cardsData = {cardsName:"User White List",cardsFor: "userWhiteList",
+    const cardsData = {cardsName:"用户白名单",cardsFor: "userWhiteList",
     	cardsSource: this.props.userWhiteList,returnURL,displayName,
   		subItems: [
     
@@ -133,6 +136,10 @@ class UserWhiteListDashboard extends Component {
     const summaryOf = this.props.summaryOf || internalSummaryOf
     const renderTitle = this.props.renderTitle || internalRenderTitle
     const renderExtraFooter = this.props.renderExtraFooter || internalRenderExtraFooter
+    const renderAnalytics = this.props.renderAnalytics || defaultRenderAnalytics
+    const quickFunctions = this.props.quickFunctions || internalQuickFunctions
+    const renderSubjectList = this.props.renderSubjectList || internalRenderSubjectList
+    
     return (
 
       <PageHeaderLayout
@@ -140,15 +147,18 @@ class UserWhiteListDashboard extends Component {
         content={summaryOf(cardsData.cardsSource,this)}
         wrapperClassName={styles.advancedForm}
       >
-      {renderExtraHeader(cardsData.cardsSource)}
-        <div>
+       
+        {renderExtraHeader(cardsData.cardsSource)}
+        {quickFunctions(cardsData)} 
+        {renderAnalytics(cardsData.cardsSource)}
         {settingListOf(cardsData.cardsSource)}
-        {imageListOf(cardsData.cardsSource)}
-        {subListsOf(cardsData)} 
+        {imageListOf(cardsData.cardsSource)}  
+        {renderSubjectList(cardsData)}       
         {largeTextOf(cardsData.cardsSource)}
-          
-        </div>
+        {renderExtraFooter(cardsData.cardsSource)}
+  		
       </PageHeaderLayout>
+    
     )
   }
 }

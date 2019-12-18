@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import FontAwesome from 'react-fontawesome';
 import { connect } from 'dva'
 import moment from 'moment'
-import BooleanOption from 'components/BooleanOption';
+import BooleanOption from '../../components/BooleanOption';
 import { Row, Col, Icon, Card, Tabs, Table, Radio, DatePicker, Tooltip, Menu, Dropdown,Badge, Switch,Select,Form,AutoComplete,Modal } from 'antd'
 import { Link, Route, Redirect} from 'dva/router'
 import numeral from 'numeral'
@@ -26,8 +26,9 @@ const {aggregateDataset,calcKey, defaultHideCloseTrans,
   defaultImageListOf,defaultSettingListOf,defaultBuildTransferModal,
   defaultExecuteTrans,defaultHandleTransferSearch,defaultShowTransferModel,
   defaultRenderExtraHeader,
-  defaultSubListsOf,
-  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers
+  defaultSubListsOf,defaultRenderAnalytics,
+  defaultRenderExtraFooter,renderForTimeLine,renderForNumbers,
+  defaultQuickFunctions, defaultRenderSubjectList,
 }= DashboardTool
 
 
@@ -48,6 +49,7 @@ const optionList =(secUser)=>{return [
 
 const buildTransferModal = defaultBuildTransferModal
 const showTransferModel = defaultShowTransferModel
+const internalRenderSubjectList = defaultRenderSubjectList
 const internalSettingListOf = (secUser) =>defaultSettingListOf(secUser, optionList)
 const internalLargeTextOf = (secUser) =>{
 
@@ -79,15 +81,18 @@ const internalSummaryOf = (secUser,targetComponent) =>{
 	const userContext = null
 	return (
 	<DescriptionList className={styles.headerList} size="small" col="4">
-<Description term="Id">{secUser.id}</Description> 
-<Description term="Login">{secUser.login}</Description> 
-<Description term="Mobile">{secUser.mobile}</Description> 
-<Description term="Email">{secUser.email}</Description> 
-<Description term="Pwd">{secUser.pwd}</Description> 
-<Description term="Verification Code">{secUser.verificationCode}</Description> 
-<Description term="Verification Code Expire">{ moment(secUser.verificationCodeExpire).format('YYYY-MM-DD')}</Description> 
-<Description term="Last Login Time">{ moment(secUser.lastLoginTime).format('YYYY-MM-DD')}</Description> 
-<Description term="Current Status">{secUser.currentStatus}</Description> 
+<Description term="ID">{secUser.id}</Description> 
+<Description term="登录">{secUser.login}</Description> 
+<Description term="手机号码">{secUser.mobile}</Description> 
+<Description term="电子邮件">{secUser.email}</Description> 
+<Description term="密码">{secUser.pwd}</Description> 
+<Description term="微信openid">{secUser.weixinOpenid}</Description> 
+<Description term="微信Appid">{secUser.weixinAppid}</Description> 
+<Description term="访问令牌">{secUser.accessToken}</Description> 
+<Description term="验证码">{secUser.verificationCode}</Description> 
+<Description term="验证码过期">{ moment(secUser.verificationCodeExpire).format('YYYY-MM-DD')}</Description> 
+<Description term="最后登录时间">{ moment(secUser.lastLoginTime).format('YYYY-MM-DD')}</Description> 
+<Description term="当前状态">{secUser.currentStatus}</Description> 
 	
         {buildTransferModal(secUser,targetComponent)}
       </DescriptionList>
@@ -95,6 +100,7 @@ const internalSummaryOf = (secUser,targetComponent) =>{
 
 }
 
+const internalQuickFunctions = defaultQuickFunctions
 
 class SecUserDashboard extends Component {
 
@@ -124,11 +130,11 @@ class SecUserDashboard extends Component {
     }
     const returnURL = this.props.returnURL
     
-    const cardsData = {cardsName:"Sec User",cardsFor: "secUser",
+    const cardsData = {cardsName:"安全用户",cardsFor: "secUser",
     	cardsSource: this.props.secUser,returnURL,displayName,
   		subItems: [
-{name: 'userAppList', displayName:'User App',type:'userApp',count:userAppCount,addFunction: true, role: 'userApp', metaInfo: userAppListMetaInfo},
-{name: 'loginHistoryList', displayName:'Login History',type:'loginHistory',count:loginHistoryCount,addFunction: true, role: 'loginHistory', metaInfo: loginHistoryListMetaInfo},
+{name: 'userAppList', displayName:'用户应用程序',type:'userApp',count:userAppCount,addFunction: true, role: 'userApp', metaInfo: userAppListMetaInfo, renderItem: GlobalComponents.UserAppBase.renderItemOfList},
+{name: 'loginHistoryList', displayName:'登录历史',type:'loginHistory',count:loginHistoryCount,addFunction: false, role: 'loginHistory', metaInfo: loginHistoryListMetaInfo, renderItem: GlobalComponents.LoginHistoryBase.renderItemOfList},
     
       	],
   	};
@@ -141,6 +147,10 @@ class SecUserDashboard extends Component {
     const summaryOf = this.props.summaryOf || internalSummaryOf
     const renderTitle = this.props.renderTitle || internalRenderTitle
     const renderExtraFooter = this.props.renderExtraFooter || internalRenderExtraFooter
+    const renderAnalytics = this.props.renderAnalytics || defaultRenderAnalytics
+    const quickFunctions = this.props.quickFunctions || internalQuickFunctions
+    const renderSubjectList = this.props.renderSubjectList || internalRenderSubjectList
+    
     return (
 
       <PageHeaderLayout
@@ -148,15 +158,18 @@ class SecUserDashboard extends Component {
         content={summaryOf(cardsData.cardsSource,this)}
         wrapperClassName={styles.advancedForm}
       >
-      {renderExtraHeader(cardsData.cardsSource)}
-        <div>
+       
+        {renderExtraHeader(cardsData.cardsSource)}
+        {quickFunctions(cardsData)} 
+        {renderAnalytics(cardsData.cardsSource)}
         {settingListOf(cardsData.cardsSource)}
-        {imageListOf(cardsData.cardsSource)}
-        {subListsOf(cardsData)} 
+        {imageListOf(cardsData.cardsSource)}  
+        {renderSubjectList(cardsData)}       
         {largeTextOf(cardsData.cardsSource)}
-          
-        </div>
+        {renderExtraFooter(cardsData.cardsSource)}
+  		
       </PageHeaderLayout>
+    
     )
   }
 }

@@ -7,6 +7,12 @@ import com.doublechaintech.messagecenter.BaseEntity;
 import com.doublechaintech.messagecenter.SmartList;
 import com.doublechaintech.messagecenter.MultipleAccessKey;
 import com.doublechaintech.messagecenter.MessagecenterUserContext;
+
+import com.doublechaintech.messagecenter.userdomain.UserDomain;
+import com.doublechaintech.messagecenter.userapp.UserApp;
+import com.doublechaintech.messagecenter.secuserblocking.SecUserBlocking;
+import com.doublechaintech.messagecenter.loginhistory.LoginHistory;
+
 import com.doublechaintech.messagecenter.userdomain.UserDomainDAO;
 import com.doublechaintech.messagecenter.userapp.UserAppDAO;
 import com.doublechaintech.messagecenter.loginhistory.LoginHistoryDAO;
@@ -97,6 +103,13 @@ public interface SecUserDAO{
  	public void analyzeSecUserByBlocking(SmartList<SecUser> resultList, String secUserBlockingId, Map<String,Object> options);
 
  
- }
+ 
+	// 需要一个加载引用我的对象的enhance方法:UserApp的secUser的UserAppList
+	public SmartList<UserApp> loadOurUserAppList(MessagecenterUserContext userContext, List<SecUser> us, Map<String,Object> options) throws Exception;
+	
+	// 需要一个加载引用我的对象的enhance方法:LoginHistory的secUser的LoginHistoryList
+	public SmartList<LoginHistory> loadOurLoginHistoryList(MessagecenterUserContext userContext, List<SecUser> us, Map<String,Object> options) throws Exception;
+	
+}
 
 

@@ -3,6 +3,8 @@ package com.doublechaintech.messagecenter.platform;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import java.math.BigDecimal;
@@ -26,7 +28,10 @@ import com.doublechaintech.messagecenter.profile.ProfileDAO;
 
 
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.RowCallbackHandler;
+
 
 public class PlatformJDBCTemplateDAO extends MessagecenterNamingServiceDAO implements PlatformDAO{
 
@@ -608,9 +613,9 @@ public class PlatformJDBCTemplateDAO extends MessagecenterNamingServiceDAO imple
 			return platform;
 		}
 		
-		for(Profile profile: externalProfileList){
+		for(Profile profileItem: externalProfileList){
 
-			profile.clearFromAll();
+			profileItem.clearFromAll();
 		}
 		
 		
@@ -636,9 +641,9 @@ public class PlatformJDBCTemplateDAO extends MessagecenterNamingServiceDAO imple
 			return platform;
 		}
 		
-		for(PrivateMessage privateMessage: externalPrivateMessageList){
+		for(PrivateMessage privateMessageItem: externalPrivateMessageList){
 
-			privateMessage.clearFromAll();
+			privateMessageItem.clearFromAll();
 		}
 		
 		
@@ -668,9 +673,9 @@ public class PlatformJDBCTemplateDAO extends MessagecenterNamingServiceDAO imple
 			return platform;
 		}
 		
-		for(PrivateMessage privateMessage: externalPrivateMessageList){
-			privateMessage.clearSender();
-			privateMessage.clearPlatform();
+		for(PrivateMessage privateMessageItem: externalPrivateMessageList){
+			privateMessageItem.clearSender();
+			privateMessageItem.clearPlatform();
 			
 		}
 		
@@ -712,9 +717,9 @@ public class PlatformJDBCTemplateDAO extends MessagecenterNamingServiceDAO imple
 			return platform;
 		}
 		
-		for(PrivateMessage privateMessage: externalPrivateMessageList){
-			privateMessage.clearReceiver();
-			privateMessage.clearPlatform();
+		for(PrivateMessage privateMessageItem: externalPrivateMessageList){
+			privateMessageItem.clearReceiver();
+			privateMessageItem.clearPlatform();
 			
 		}
 		
@@ -945,6 +950,55 @@ public class PlatformJDBCTemplateDAO extends MessagecenterNamingServiceDAO imple
 	public void enhanceList(List<Platform> platformList) {		
 		this.enhanceListInternal(platformList, this.getPlatformMapper());
 	}
+	
+	
+	// 需要一个加载引用我的对象的enhance方法:Profile的platform的ProfileList
+	public SmartList<Profile> loadOurProfileList(MessagecenterUserContext userContext, List<Platform> us, Map<String,Object> options) throws Exception{
+		if (us == null || us.isEmpty()){
+			return new SmartList<>();
+		}
+		Set<String> ids = us.stream().map(it->it.getId()).collect(Collectors.toSet());
+		MultipleAccessKey key = new MultipleAccessKey();
+		key.put(Profile.PLATFORM_PROPERTY, ids.toArray(new String[ids.size()]));
+		SmartList<Profile> loadedObjs = userContext.getDAOGroup().getProfileDAO().findProfileWithKey(key, options);
+		Map<String, List<Profile>> loadedMap = loadedObjs.stream().collect(Collectors.groupingBy(it->it.getPlatform().getId()));
+		us.forEach(it->{
+			String id = it.getId();
+			List<Profile> loadedList = loadedMap.get(id);
+			if (loadedList == null || loadedList.isEmpty()) {
+				return;
+			}
+			SmartList<Profile> loadedSmartList = new SmartList<>();
+			loadedSmartList.addAll(loadedList);
+			it.setProfileList(loadedSmartList);
+		});
+		return loadedObjs;
+	}
+	
+	// 需要一个加载引用我的对象的enhance方法:PrivateMessage的platform的PrivateMessageList
+	public SmartList<PrivateMessage> loadOurPrivateMessageList(MessagecenterUserContext userContext, List<Platform> us, Map<String,Object> options) throws Exception{
+		if (us == null || us.isEmpty()){
+			return new SmartList<>();
+		}
+		Set<String> ids = us.stream().map(it->it.getId()).collect(Collectors.toSet());
+		MultipleAccessKey key = new MultipleAccessKey();
+		key.put(PrivateMessage.PLATFORM_PROPERTY, ids.toArray(new String[ids.size()]));
+		SmartList<PrivateMessage> loadedObjs = userContext.getDAOGroup().getPrivateMessageDAO().findPrivateMessageWithKey(key, options);
+		Map<String, List<PrivateMessage>> loadedMap = loadedObjs.stream().collect(Collectors.groupingBy(it->it.getPlatform().getId()));
+		us.forEach(it->{
+			String id = it.getId();
+			List<PrivateMessage> loadedList = loadedMap.get(id);
+			if (loadedList == null || loadedList.isEmpty()) {
+				return;
+			}
+			SmartList<PrivateMessage> loadedSmartList = new SmartList<>();
+			loadedSmartList.addAll(loadedList);
+			it.setPrivateMessageList(loadedSmartList);
+		});
+		return loadedObjs;
+	}
+	
+	
 	@Override
 	public void collectAndEnhance(BaseEntity ownerEntity) {
 		List<Platform> platformList = ownerEntity.collectRefsWithType(Platform.INTERNAL_TYPE);
@@ -977,6 +1031,89 @@ public class PlatformJDBCTemplateDAO extends MessagecenterNamingServiceDAO imple
 	public SmartList<Platform> queryList(String sql, Object... parameters) {
 	    return this.queryForList(sql, parameters, this.getPlatformMapper());
 	}
+	
+	
+    
+	public Map<String, Integer> countBySql(String sql, Object[] params) {
+		if (params == null || params.length == 0) {
+			return new HashMap<>();
+		}
+		List<Map<String, Object>> result = this.getJdbcTemplateObject().queryForList(sql, params);
+		if (result == null || result.isEmpty()) {
+			return new HashMap<>();
+		}
+		Map<String, Integer> cntMap = new HashMap<>();
+		for (Map<String, Object> data : result) {
+			String key = (String) data.get("id");
+			Number value = (Number) data.get("count");
+			cntMap.put(key, value.intValue());
+		}
+		this.logSQLAndParameters("countBySql", sql, params, cntMap.size() + " Counts");
+		return cntMap;
+	}
+
+	public Integer singleCountBySql(String sql, Object[] params) {
+		Integer cnt = this.getJdbcTemplateObject().queryForObject(sql, params, Integer.class);
+		logSQLAndParameters("singleCountBySql", sql, params, cnt + "");
+		return cnt;
+	}
+
+	public BigDecimal summaryBySql(String sql, Object[] params) {
+		BigDecimal cnt = this.getJdbcTemplateObject().queryForObject(sql, params, BigDecimal.class);
+		logSQLAndParameters("summaryBySql", sql, params, cnt + "");
+		return cnt == null ? BigDecimal.ZERO : cnt;
+	}
+
+	public <T> List<T> queryForList(String sql, Object[] params, Class<T> claxx) {
+		List<T> result = this.getJdbcTemplateObject().queryForList(sql, params, claxx);
+		logSQLAndParameters("queryForList", sql, params, result.size() + " items");
+		return result;
+	}
+
+	public Map<String, Object> queryForMap(String sql, Object[] params) throws DataAccessException {
+		Map<String, Object> result = null;
+		try {
+			result = this.getJdbcTemplateObject().queryForMap(sql, params);
+		} catch (org.springframework.dao.EmptyResultDataAccessException e) {
+			// 空结果，返回null
+		}
+		logSQLAndParameters("queryForObject", sql, params, result == null ? "not found" : String.valueOf(result));
+		return result;
+	}
+
+	public <T> T queryForObject(String sql, Object[] params, Class<T> claxx) throws DataAccessException {
+		T result = null;
+		try {
+			result = this.getJdbcTemplateObject().queryForObject(sql, params, claxx);
+		} catch (org.springframework.dao.EmptyResultDataAccessException e) {
+			// 空结果，返回null
+		}
+		logSQLAndParameters("queryForObject", sql, params, result == null ? "not found" : String.valueOf(result));
+		return result;
+	}
+
+	public List<Map<String, Object>> queryAsMapList(String sql, Object[] params) {
+		List<Map<String, Object>> result = getJdbcTemplateObject().queryForList(sql, params);
+		logSQLAndParameters("queryAsMapList", sql, params, result.size() + " items");
+		return result;
+	}
+
+	public synchronized int updateBySql(String sql, Object[] params) {
+		int result = getJdbcTemplateObject().update(sql, params);
+		logSQLAndParameters("updateBySql", sql, params, result + " items");
+		return result;
+	}
+
+	public void execSqlWithRowCallback(String sql, Object[] args, RowCallbackHandler callback) {
+		getJdbcTemplateObject().query(sql, args, callback);
+	}
+
+	public void executeSql(String sql) {
+		logSQLAndParameters("executeSql", sql, new Object[] {}, "");
+		getJdbcTemplateObject().execute(sql);
+	}
+
+
 }
 
 

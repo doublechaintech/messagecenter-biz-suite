@@ -1,7 +1,7 @@
 
 export const SYSTEM_SHORT_NAME = "messagecenter" //Use for requssting different apps
 export const SYSTEM_LOCAL_NAME = "Message Center Services" 
-export const BUILD_TIIME="Thu Feb 28 23:41:27 CST 2019"
+export const BUILD_TIIME="Thu Jul 18 16:11:47 CST 2019"
 export const MEDIA_UPLOAD_URL="https://www.doublechaintech.com/mss/upload.html"
 export const MEDIA_PREFIX="https://www.doublechaintech.com/mss/"
 

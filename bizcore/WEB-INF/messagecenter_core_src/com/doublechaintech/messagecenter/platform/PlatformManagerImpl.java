@@ -249,8 +249,9 @@ public class PlatformManagerImpl extends CustomMessagecenterCheckerManager imple
 			//will be good when the platform loaded from this JVM process cache.
 			//also good when there is a ram based DAO implementation
 			//make changes to Platform.
+			if (platform.isChanged()){
 			
-			
+			}
 			platform = savePlatform(userContext, platform, options);
 			return platform;
 			
@@ -508,8 +509,8 @@ public class PlatformManagerImpl extends CustomMessagecenterCheckerManager imple
 			String profileIds[],String [] tokensExpr) throws Exception {
 		
 		userContext.getChecker().checkIdOfPlatform(platformId);
-		for(String profileId: profileIds){
-			userContext.getChecker().checkIdOfProfile(profileId);
+		for(String profileIdItem: profileIds){
+			userContext.getChecker().checkIdOfProfile(profileIdItem);
 		}
 		
 		userContext.getChecker().throwExceptionIfHasErrors(PlatformManagerException.class);
@@ -764,8 +765,8 @@ public class PlatformManagerImpl extends CustomMessagecenterCheckerManager imple
 			String privateMessageIds[],String [] tokensExpr) throws Exception {
 		
 		userContext.getChecker().checkIdOfPlatform(platformId);
-		for(String privateMessageId: privateMessageIds){
-			userContext.getChecker().checkIdOfPrivateMessage(privateMessageId);
+		for(String privateMessageIdItem: privateMessageIds){
+			userContext.getChecker().checkIdOfPrivateMessage(privateMessageIdItem);
 		}
 		
 		userContext.getChecker().throwExceptionIfHasErrors(PlatformManagerException.class);

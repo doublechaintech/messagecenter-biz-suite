@@ -248,8 +248,9 @@ public class ProfileManagerImpl extends CustomMessagecenterCheckerManager implem
 			//will be good when the profile loaded from this JVM process cache.
 			//also good when there is a ram based DAO implementation
 			//make changes to Profile.
+			if (profile.isChanged()){
 			
-			
+			}
 			profile = saveProfile(userContext, profile, options);
 			return profile;
 			
@@ -583,8 +584,8 @@ public class ProfileManagerImpl extends CustomMessagecenterCheckerManager implem
 			String privateMessageIds[],String [] tokensExpr) throws Exception {
 		
 		userContext.getChecker().checkIdOfProfile(profileId);
-		for(String privateMessageId: privateMessageIds){
-			userContext.getChecker().checkIdOfPrivateMessage(privateMessageId);
+		for(String privateMessageIdItem: privateMessageIds){
+			userContext.getChecker().checkIdOfPrivateMessage(privateMessageIdItem);
 		}
 		
 		userContext.getChecker().throwExceptionIfHasErrors(ProfileManagerException.class);
@@ -842,8 +843,8 @@ public class ProfileManagerImpl extends CustomMessagecenterCheckerManager implem
 			String privateMessageIds[],String [] tokensExpr) throws Exception {
 		
 		userContext.getChecker().checkIdOfProfile(profileId);
-		for(String privateMessageId: privateMessageIds){
-			userContext.getChecker().checkIdOfPrivateMessage(privateMessageId);
+		for(String privateMessageIdItem: privateMessageIds){
+			userContext.getChecker().checkIdOfPrivateMessage(privateMessageIdItem);
 		}
 		
 		userContext.getChecker().throwExceptionIfHasErrors(ProfileManagerException.class);
